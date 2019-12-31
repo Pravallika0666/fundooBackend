@@ -56,3 +56,21 @@ exports.login = ((request, callback) => {
             callback("email doesnt match or exit")
     })
 })
+/**
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+ */
+exports.forgotpassword = ((request, callback) => {
+    model.users.findOne({
+        //checks the email in schema using findone
+        "email": request.body.email
+    }, (err, data) => {
+        if (data) {
+            callback(null, data)
+        } else {
+            callback("invalid user email ");
+        }
+    })
+})

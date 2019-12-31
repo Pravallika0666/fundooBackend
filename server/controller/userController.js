@@ -1,5 +1,6 @@
 const Services = require('../services/userServices')
 const tokenGenerate = require('../middlewares/token')
+const nodeMail=require('../middlewares/sendMailer')
 require('dotenv').config()
 /**********************************************************
  *  @desc Gets the input from front end pass to model
@@ -14,6 +15,8 @@ exports.register = (request, res) => {
         request.checkBody('lastName', 'lastname is invalid').notEmpty().isAlpha();
         request.checkBody('email', 'email is invalid').isEmail().notEmpty();
         request.checkBody('password', 'password is invalid').notEmpty().len(7, 13);
+        request.checkBody('confirmpassword','confirmpassword is invalid').notEmpty().len(7, 13).equals(request.body.password);
+
         var error = request.validationErrors()
         var response = {}
         if (error) {
@@ -46,6 +49,7 @@ exports.register = (request, res) => {
  * @param callback sends the data back or err
  * @return responses with a http response
 ***********************************************************/
+//exports login
 exports.login = (request, res) => {
     console.log("Login")
     request.checkBody('email', 'Email is invalid').isEmail().notEmpty();
@@ -82,3 +86,50 @@ exports.login = (request, res) => {
         })
     }
 }
+
+/**********************************************************
+ *  @desc Gets the input from front end pass to model
+ *  @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports forgotpassword
+exports.forgotpassword=((request,res)=>{
+    try {
+        console.log('Forgot password')
+            //request for the email,password and new password
+        request.checkBody('email', 'email is invalid').notEmpty().isEmail()
+        var error = request.validationErrors()
+        var response = {}
+        if (error) {
+            response.error = error
+            response.failure = false
+            res.status(422).send(response);
+        } else {
+            Services.forgotpassword(request, (err, data) => {
+                if (err) {
+                    response.failure = false
+                    response.data = err
+                    res.status(402).send(response)
+                } else {
+                    console.log('data')
+                    let payLoad = data._id;
+                    let obj = tokenGenerate.generateToken(payLoad);
+                    console.log("controller pay load", obj);
+                    let url = `http://localhost:4000/resetPassword/${obj.token}`
+
+                    console.log("controller pay load", url);
+                    console.log("email", request.body.email)
+                    nodeMail.sendMailer(url, request.body.email)
+                    response.sucess = true;
+                    response.data = data;
+                    res.status(200).send(response);
+                }
+            })
+        }
+
+
+    } catch (e) {
+        console.log(e)
+    }
+})
