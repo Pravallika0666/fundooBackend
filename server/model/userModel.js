@@ -1,5 +1,5 @@
 const mongoose=require('mongoose')
-var Schema=mongoose.Schema
+var Schema=mongoose.Schema//schema represents how the data is being organised
 
 const usersData = new Schema({
    firstName:{
