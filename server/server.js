@@ -9,12 +9,12 @@ require('dotenv').config()
 
 const express=require('express');//allows to setup middlewares
 
-const bodyParser=require('body-parser');
+const bodyParser=require('body-parser');//body parsing middleware
 const routerUser=require('./router/userRouter');
 const dbConnect=require('../server/configuration/dbConfig')
 const expressValidator=require('express-validator');
 
-const app=express();
+const app=express(); //creating an express app
 
 app.use(bodyParser.json());     
 app.use(bodyParser.urlencoded({extended:true}))
