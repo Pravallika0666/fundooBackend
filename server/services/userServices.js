@@ -29,3 +29,19 @@ exports.register = ((request, callback) => {
         } console.log("model end")
     })
 })
+exports.login = ((request, callback) => {
+    model.users.findOne({ "email": request.body.email }, (err, data) => {
+        if (data) {
+            console.log("DATA PASSWORD_------>",data);
+            
+            bcrypt.compare(request.body.password, data.password, (err, success) => {
+                if (success)
+                    callback(null, data);
+                else
+                    callback("wrong Password");
+            })
+        }
+        else
+            callback("email doesnt match or exit")
+    })
+})
