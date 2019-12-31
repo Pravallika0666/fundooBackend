@@ -7,7 +7,7 @@
  ******************************************************************************************/
 require('dotenv').config()
 
-const express=require('express');
+const express=require('express');//allows to setup middlewares
 
 const bodyParser=require('body-parser');
 const routerUser=require('./router/userRouter');
