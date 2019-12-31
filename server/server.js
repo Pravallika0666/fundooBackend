@@ -12,12 +12,12 @@ const express=require('express');//allows to setup middlewares
 const bodyParser=require('body-parser');//body parsing middleware
 const routerUser=require('./router/userRouter');
 const dbConnect=require('../server/configuration/dbConfig')
-const expressValidator=require('express-validator');
+const expressValidator=require('express-validator');//it is a middleware which is used to validate user input
 
 const app=express(); //creating an express app
 
-app.use(bodyParser.json());     
-app.use(bodyParser.urlencoded({extended:true}))
+app.use(bodyParser.json());//parses the text as JSON and exposes the resulting object to the req.body
+app.use(bodyParser.urlencoded({extended:true}))//parses the urlencoded data and exposes the resulting object to the req.body
 app.use(expressValidator());
 
 app.use('/',routerUser)
