@@ -113,14 +113,14 @@ exports.forgotpassword=((request,res)=>{
                     res.status(402).send(response)
                 } else {
                     console.log('data')
-                    let payLoad = data._id;
+                    let payLoad = data._id;//takes the id from the data 
                     let obj = tokenGenerate.generateToken(payLoad);
                     console.log("controller pay load", obj);
                     let url = `http://localhost:4000/resetPassword/${obj.token}`
 
                     console.log("controller pay load", url);
                     console.log("email", request.body.email)
-                    nodeMail.sendMailer(url, request.body.email)
+                    nodeMail.sendMailer(url, request.body.email)//send a mail from node mailer
                     response.sucess = true;
                     response.data = data;
                     res.status(200).send(response);
