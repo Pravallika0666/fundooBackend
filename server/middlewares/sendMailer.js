@@ -14,7 +14,7 @@ exports.sendMailer = (url, email) => {
     var mailOptions = {
         from: process.env.EMAIL,//sender email
         to: email,//list of receivers
-        subject: 'reset password',
+        subject: 'reset password',//subject for the mail
         description: 'click to reset your password',
         text: url
     };
