@@ -7,6 +7,7 @@ require('dotenv').config()
  * @param callback sends the data back or err
  * @return responses with a http response
 ***********************************************************/
+//exports register
 exports.register = (request, res) => {
     try {
         request.checkBody('firstName', 'firstname is invalid').notEmpty().isAlpha();
