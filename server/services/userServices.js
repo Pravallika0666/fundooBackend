@@ -1,7 +1,12 @@
 const model = require('../model/userModel')
 const bcrypt = require('bcrypt')
 const emailExistence = require('email-existence')
-
+/**
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+ */
 exports.register = ((request, callback) => {
     model.users.findOne({ "email": request.body.email }, (err, data) => {
         if (data) callback("user exits");
@@ -29,6 +34,12 @@ exports.register = ((request, callback) => {
         } console.log("model end")
     })
 })
+/**
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+ */
 exports.login = ((request, callback) => {
     model.users.findOne({ "email": request.body.email }, (err, data) => {
         if (data) {
