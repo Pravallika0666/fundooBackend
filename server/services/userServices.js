@@ -1,12 +1,13 @@
 const model = require('../model/userModel')
 const bcrypt = require('bcrypt')
-const emailExistence = require('email-existence')
-/**
+const emailExistence = require('email-existence')//used to check email is existing or not
+/*********************************************************
  * @desc Gets the input from front end pass to model
  * @param request request contains all the requested data
  * @param callback sends the data back or err
  * @return responses with a http response
- */
+ *********************************************************/
+//exports register
 exports.register = ((request, callback) => {
     model.users.findOne({ "email": request.body.email }, (err, data) => {
         if (data) callback("user exits");
@@ -34,12 +35,13 @@ exports.register = ((request, callback) => {
         } console.log("model end")
     })
 })
-/**
+/**********************************************************
  * @desc Gets the input from front end pass to model
  * @param request request contains all the requested data
  * @param callback sends the data back or err
  * @return responses with a http response
- */
+ **********************************************************/
+//exports login
 exports.login = ((request, callback) => {
     model.users.findOne({ "email": request.body.email }, (err, data) => {
         if (data) {
@@ -56,12 +58,12 @@ exports.login = ((request, callback) => {
             callback("email doesnt match or exit")
     })
 })
-/**
+/**********************************************************
  * @desc Gets the input from front end pass to model
  * @param request request contains all the requested data
  * @param callback sends the data back or err
  * @return responses with a http response
- */
+ **********************************************************/
 //exports forgotpassword
 exports.forgotpassword = ((request, callback) => {
     model.users.findOne({
@@ -75,12 +77,12 @@ exports.forgotpassword = ((request, callback) => {
         }
     })
 })
-/**
+/**********************************************************
  * @desc Gets the input from front end pass to model
  * @param request request contains all the requested data
  * @param callback sends the data back or err
  * @return responses with a http response
- */
+ **********************************************************/
 //exports resetpassword
 exports.resetpassword = (request, callback) => {
     bcrypt.hash(request.body.password, 10, (err, encrypted) => {
