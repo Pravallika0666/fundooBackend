@@ -1,0 +1,20 @@
+{
+    "registration": {
+        "firstName": "pravallika",
+        "lastName": "sk",
+        "email": "skpravallikachowdary2@gmail.com",
+        "password": "123456789",
+        "confirmPassword": "123456789"
+    },
+    "login": {
+        "email": "skpravallikachowdary2@gmail.com",
+        "password": "123456789"
+    },
+    "forgotPassword": {
+        "email": "skpravallikachowdary2@gmail.com"
+    },
+    "resetPassword": {
+        "password": "123456789",
+        "confirmPassword": "123456789"
+    }
+}

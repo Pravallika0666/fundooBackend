@@ -17,10 +17,10 @@ exports.register = ((request, callback) => {
                 else {
                     bcrypt.hash(request.body.password, 10, (err, encrypted) => {
                         var userDetails = new model.users({
-                            "firstName":request.body.firstName,
-                            "lastName":request.body.lastName,
-                            "email":request.body.email,
-                            "password":encrypted
+                            "firstName": request.body.firstName,
+                            "lastName": request.body.lastName,
+                            "email": request.body.email,
+                            "password": encrypted
                         })
                         userDetails.save((err, data) => {
                             if (err) {
@@ -43,8 +43,8 @@ exports.register = ((request, callback) => {
 exports.login = ((request, callback) => {
     model.users.findOne({ "email": request.body.email }, (err, data) => {
         if (data) {
-            console.log("DATA PASSWORD_------>",data);
-            
+            console.log("DATA PASSWORD_------>", data);
+
             bcrypt.compare(request.body.password, data.password, (err, success) => {
                 if (success)
                     callback(null, data);
@@ -75,3 +75,24 @@ exports.forgotpassword = ((request, callback) => {
         }
     })
 })
+/**
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+ */
+//exports resetpassword
+exports.resetpassword = (request, callback) => {
+    bcrypt.hash(request.body.password, 10, (err, encrypted) => {
+        model.users.updateOne(
+            { "_id": request.decoded.payload }, {
+                "password": encrypted
+            }, (err, data) => {
+                if (data)
+                    callback(null, data);
+                else
+                    callback("error");
+            })
+    })
+
+}

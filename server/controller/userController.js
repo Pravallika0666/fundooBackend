@@ -1,6 +1,6 @@
 const Services = require('../services/userServices')
 const tokenGenerate = require('../middlewares/token')
-const nodeMail=require('../middlewares/sendMailer')
+const nodeMail = require('../middlewares/sendMailer')
 require('dotenv').config()
 /**********************************************************
  *  @desc Gets the input from front end pass to model
@@ -15,7 +15,7 @@ exports.register = (request, res) => {
         request.checkBody('lastName', 'lastname is invalid').notEmpty().isAlpha();
         request.checkBody('email', 'email is invalid').isEmail().notEmpty();
         request.checkBody('password', 'password is invalid').notEmpty().len(7, 13);
-        request.checkBody('confirmpassword','confirmpassword is invalid').notEmpty().len(7, 13).equals(request.body.password);
+        request.checkBody('confirmpassword', 'confirmpassword is invalid').notEmpty().len(7, 13).equals(request.body.password);
 
         var error = request.validationErrors()
         var response = {}
@@ -94,10 +94,10 @@ exports.login = (request, res) => {
  * @return responses with a http response
 ***********************************************************/
 //exports forgotpassword
-exports.forgotpassword=((request,res)=>{
+exports.forgotpassword = ((request, res) => {
     try {
         console.log('Forgot password')
-            //request for the email,password and new password
+        //request for the email,password and new password
         request.checkBody('email', 'email is invalid').notEmpty().isEmail()
         var error = request.validationErrors()
         var response = {}
@@ -133,3 +133,35 @@ exports.forgotpassword=((request,res)=>{
         console.log(e)
     }
 })
+/**********************************************************
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports resetpassword
+exports.resetpassword = (request, res) => {
+    try {
+        request.checkBody('password', 'password is invalid').notEmpty().len(7, 13)
+        request.checkBody('confirmpassword', 'confirmpassword is invalid').notEmpty().len(7, 13);
+        var error = request.validationErrors()
+        if (request.body.password != request.body.confirmpassword)
+        var error = "confirmpassword is incorrect";
+        var response = {};
+        if (error) {
+            response.error = error;
+            response.failure = false;
+            return res.status(422).send(response);
+        } else {
+            Services.resetpassword(request, (err, data) => {
+                if (err) {
+                    res.status(404).send(response);
+                } else {
+                    res.status(200).send(data);
+                }
+            })
+        }
+    } catch (e) {
+        console.log(e)
+    }
+}
