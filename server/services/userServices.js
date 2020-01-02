@@ -83,7 +83,6 @@ exports.forgotpassword = ((request, callback) => {
  * @param callback sends the data back or err
  * @return responses with a http response
  **********************************************************/
-//exports resetpassword
 exports.resetpassword = (request, callback) => {
     bcrypt.hash(request.body.password, 10, (err, encrypted) => {
         model.users.updateOne(
