@@ -21,3 +21,23 @@ exports.addNote = (request) => {
         console.log(e)
     }
 }
+exports.getAllnote=(request)=>{
+    try{
+        return new Promise((resolve,reject)=>{
+            let noteDetails=new noteModel.notes({
+                "userId":request.decoded.payload.id,
+                "title":request.body.title,
+                "description":request.body.description
+            })
+            noteDetails.save((err,data)=>{
+                if(data){
+                    resolve(data)
+                }else{
+                    reject(err)
+                }
+            })
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
