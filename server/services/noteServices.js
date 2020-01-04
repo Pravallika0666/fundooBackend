@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const noteModel = require('../model/userModel')
+const noteModel = require('../model/noteModel')
 
 exports.addNote = (request) => {
     try {
