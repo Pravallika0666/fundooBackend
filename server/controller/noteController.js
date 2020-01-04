@@ -35,3 +35,23 @@ exports.addNote=(request,res)=>{
         
     }
 }
+
+exports.getAllnote=(request,res)=>{
+    try{
+        let response={}
+        noteServices.getAllnote(request)
+        .then((data)=>{
+            response.success=true;
+            response.data=data
+            res.status(200).send(response)
+        })
+        .catch((e)=>{
+            response.success=false;
+            response.err=err
+            res.status(404).send(response)
+        })
+    }catch(e){
+        console.log(e);
+        
+    }
+}
