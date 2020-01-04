@@ -4,3 +4,4 @@ const express=require('express')
 const router=express.Router();
 
 router.post('/addNote',noteVerify.userVerify,noteController.addNote)
+router.get('/getAllnote',noteVerify.userVerify,noteController.getAllnote)
