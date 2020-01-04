@@ -1,5 +1,10 @@
 const noteServices=require('../services')
-
+/**********************************************************
+ *  @desc Gets the input from front end pass to model
+ *  @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
 exports.addNote=(request,res)=>{
     request.checkBody('title','title is invalid').notEmpty()
     request.checkBody('description','description is invalid').notEmpty()
