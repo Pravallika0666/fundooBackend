@@ -1,4 +1,4 @@
-const noteServices=require('../services')
+const noteServices=require('../services/noteServices')
 /**********************************************************
  *  @desc Gets the input from front end pass to model
  *  @param request request contains all the requested data
