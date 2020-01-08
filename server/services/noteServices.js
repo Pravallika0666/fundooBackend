@@ -96,3 +96,31 @@ exports.updateNote=(request)=>{
         console.log(e)
     }
 }
+/**********************************************************
+ *  @desc Gets the input from front end pass to model
+ *  @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports get delete note
+exports.getDeleteNote=(request)=>{
+    try{
+        return new Promise((resolve,reject)=>{
+            noteModel.notes.find({ _userId: request.decoded.payload.id, isDeleted: true, isArchive: false }, (err, result) => {
+                if(err){
+                    reject(err)
+                }else{
+                    if(!result.length==0){
+                        resolve(result)
+                        console.log('result------->',result)
+                    }
+                    else{
+                        reject("No notes")
+                    }
+                }
+            })
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
