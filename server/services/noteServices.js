@@ -35,21 +35,22 @@ exports.addNote = (request) => {
 exports.getAllnote = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            let noteDetails = new noteModel.notes({
-                "userId": request.decoded.payload.id,
-                "title": request.body.title,
-                "description": request.body.description
+                    noteModel.notes.find({ _userId: request.decoded.payload.id, isDeleted: false, isArchive: false }, (err, result) => {
+                        if (err) {
+                            reject(err)
+                        } else {
+                            if (!result.length == 0) {  
+                                resolve(result)
+                                console.log("resullt-->", result); 
+                            } else {
+                                console.log("No Notes");
+                                reject("No Notes")
+                            }
+                        }
+                    })
             })
-            noteDetails.save((err, data) => {
-                if (data) {
-                    resolve(data)
-                } else {
-                    reject(err)
-                }
-            })
-        })
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
 }
 /**********************************************************
@@ -81,18 +82,18 @@ exports.deleteNote = (request) => {
  * @return responses with a http response
 ***********************************************************/
 //exports update note
-exports.updateNote=(request)=>{
-    try{
-        return new Promise((resolve,reject)=>{
+exports.updateNote = (request) => {
+    try {
+        return new Promise((resolve, reject) => {
             noteModel.notes.findByIdAndUpdate({ _id: req.body._id }, { title: req.body.title, description: req.body.description }, (err, data) => {
                 if (err) {
                     reject(err)
-                }else{
+                } else {
                     resolve(result)
                 }
             })
         })
-    }catch(e){
+    } catch (e) {
         console.log(e)
     }
 }
@@ -103,24 +104,24 @@ exports.updateNote=(request)=>{
  * @return responses with a http response
 ***********************************************************/
 //exports get delete note
-exports.getDeleteNote=(request)=>{
-    try{
-        return new Promise((resolve,reject)=>{
+exports.getDeleteNote = (request) => {
+    try {
+        return new Promise((resolve, reject) => {
             noteModel.notes.find({ _userId: request.decoded.payload.id, isDeleted: true, isArchive: false }, (err, result) => {
-                if(err){
+                if (err) {
                     reject(err)
-                }else{
-                    if(!result.length==0){
+                } else {
+                    if (!result.length == 0) {
                         resolve(result)
-                        console.log('result------->',result)
+                        console.log('result------->', result)
                     }
-                    else{
+                    else {
                         reject("No notes")
                     }
                 }
             })
         })
-    }catch(e){
+    } catch (e) {
         console.log(e)
     }
 }
