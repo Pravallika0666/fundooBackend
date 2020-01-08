@@ -74,3 +74,25 @@ exports.deleteNote = (request) => {
         console.log(e)
     }
 }
+/**********************************************************
+ *  @desc Gets the input from front end pass to model
+ *  @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports update note
+exports.updateNote=(request)=>{
+    try{
+        return new Promise((resolve,reject)=>{
+            noteModel.notes.findByIdAndUpdate({ _id: req.body._id }, { title: req.body.title, description: req.body.description }, (err, data) => {
+                if (err) {
+                    reject(err)
+                }else{
+                    resolve(result)
+                }
+            })
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
