@@ -61,7 +61,7 @@ exports.getAllnote = (request) => {
 exports.deleteNote = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.findByIdAndUpdate({ _id: req.body.userId }, { isDeleted: true }, (err, result) => {
+            noteModel.notes.findByIdAndUpdate({ _id: request.body.userId }, { isDeleted: true }, (err, result) => {
                 if (err) {
                     reject(err)
                 } else {
