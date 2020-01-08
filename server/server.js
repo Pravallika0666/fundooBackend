@@ -7,26 +7,27 @@
  ******************************************************************************************/
 require('dotenv').config()
 
-const express=require('express');//allows to setup middlewares
+const express = require('express');//allows to setup middlewares
+const bodyParser = require('body-parser');//body parsing middleware
+const routerUser = require('./router/userRouter');
+const routerNote = require('./router/noteRouter')
+const dbConnect = require('../server/configuration/dbConfig')
+const expressValidator = require('express-validator');//it is a middleware which is used to validate user input
 
-const bodyParser=require('body-parser');//body parsing middleware
-const routerUser=require('./router/userRouter');
-const dbConnect=require('../server/configuration/dbConfig')
-const expressValidator=require('express-validator');//it is a middleware which is used to validate user input
-
-const app=express(); //creating an express app
+const app = express(); //creating an express app
 
 app.use(bodyParser.json());//parses the text as JSON and exposes the resulting object to the req.body
-app.use(bodyParser.urlencoded({extended:true}))//parses the urlencoded data and exposes the resulting object to the req.body
+app.use(bodyParser.urlencoded({ extended: true }))//parses the urlencoded data and exposes the resulting object to the req.body
 app.use(expressValidator());
 
-app.use('/',routerUser)
-console.log("process.env",process.env.PORT);
+app.use('/', routerUser)
+app.use('/note', routerNote)
+console.log("process.env", process.env.PORT);
 
 //Initalizing the app port number,Telling frame work to start service
 app.listen(process.env.PORT, () => {
     console.log("Server is listing on port 4000")
     dbConnect.dbConnection();
-}); 
+});
 
 module.exports = app

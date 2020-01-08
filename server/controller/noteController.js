@@ -8,7 +8,7 @@ const noteServices = require('../services/noteServices')
 exports.addNote = (request, res) => {
     request.checkBody('title', 'title is invalid').notEmpty()
     request.checkBody('description', 'description is invalid').notEmpty()
-    var error = request.validationError()
+    var error = request.validationErrors()
     var response = {}
     if (error) {
         response.error = error
@@ -18,8 +18,7 @@ exports.addNote = (request, res) => {
     else {
         noteServices.addNote(request)
             .then((data) => {
-
-                console.log("In conttoller");
+                console.log("In controller");
                 response.success = true;
                 response.data = data
                 res.status(200).send(response)
@@ -70,7 +69,7 @@ exports.getAllnote = (request, res) => {
 exports.deleteNote = (request, res) => {
     try {
         request.checkBody('userId', 'userid is invalid').notEmpty()
-        var error = request.validationError()
+        var error = request.validationErrors()
         var response = {}
         if (error) {
             response.error = error;
