@@ -5,3 +5,4 @@ const router=express.Router();
 
 router.post('/addNote',noteVerify.userVerify,noteController.addNote)
 router.get('/getAllnote',noteVerify.userVerify,noteController.getAllnote)
+router.post('/deleteNote'.noteVerify.userVerify,noteController.deleteNode)
