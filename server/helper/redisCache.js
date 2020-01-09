@@ -1,5 +1,5 @@
 var redis = require('redis')
-var client = redis.createClient(port, host)
+var client = redis.createClient()
 client.on('connect', function () {
     console.log('connected')
 })
@@ -7,8 +7,9 @@ client.on('connect', function () {
 client.on('error', (err) => {
     console.log('Error' + err)
 })
-
+//exports set redis 
 exports.setRedis = (value, callback) => {
+    //set is used to hold the string value
     client.set(process.env.key, JSON.stringify(value), (err, result) => {
         if (result) {
             console.log("token set in cache", result);
@@ -20,4 +21,14 @@ exports.setRedis = (value, callback) => {
         }
     })
 }
-
+//exports get redis
+exports.getRedis=(callback)=>{
+    //get is used to get the value of key
+    client.get(process.env.key,(err,data)=>{
+        if(data){
+            callback(null,data)
+        }else{
+            callback(err)
+        }
+    })
+}
