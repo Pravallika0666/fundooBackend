@@ -39,11 +39,22 @@ exports.getAllnote = (request) => {
                         if (err) {
                             reject(err)
                         } else {
-                            if (!result.length == 0) {  
+                            if (!result.length == 0) {  //this condition to check whether get note is empty or not
                                 resolve(result)
-                                console.log("resullt-->", result); 
+                                console.log("resullt-->", result);
+                                let valueCache = {};
+                                valueCache.id = req.decoded.payload.id;
+                                valueCache.result = result;
+                                //this called to set Notes in cache.
+                                cacheNote.setRedisNote(valueCache, (err, data) => {
+                                    if (data) {
+                                        console.log("seted to cache");
+                                    } else {
+                                        console.log("not set in cache");
+                                    }
+                                })
                             } else {
-                                console.log("No Notes");
+                                console.log("NO Notes");
                                 reject("No Notes")
                             }
                         }

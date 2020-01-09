@@ -48,6 +48,7 @@ exports.getAllnote = (request, res) => {
                 response.success = true;
                 response.data = data
                 res.status(200).send(response)
+                console.log(response)
             })
             .catch((err) => {
                 response.success = false;
