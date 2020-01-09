@@ -32,3 +32,15 @@ exports.getRedis=(callback)=>{
         }
     })
 }
+//exports delete redis
+exports.deleteRedis=()=>{
+    //del is used to remove the specified key
+        client.del(process.env.key,(err,data)=>{
+            if(data){
+                console.log("delete data",data) 
+            }else{
+                console.log('no data')
+            }
+        })
+  
+}
