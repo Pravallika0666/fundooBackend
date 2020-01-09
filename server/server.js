@@ -13,13 +13,13 @@ const routerUser = require('./router/userRouter');
 const routerNote = require('./router/noteRouter')
 const dbConnect = require('../server/configuration/dbConfig')
 const expressValidator = require('express-validator');//it is a middleware which is used to validate user input
-
+var cors=require('cors')
 const app = express(); //creating an express app
 
 app.use(bodyParser.json());//parses the text as JSON and exposes the resulting object to the req.body
 app.use(bodyParser.urlencoded({ extended: true }))//parses the urlencoded data and exposes the resulting object to the req.body
 app.use(expressValidator());
-
+app.use(cors())
 app.use('/', routerUser)
 app.use('/note', routerNote)
 console.log("process.env", process.env.PORT);

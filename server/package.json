@@ -12,6 +12,7 @@
   "dependencies": {
     "bcrypt": "^3.0.7",
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "email-existence": "^0.1.6",
     "express": "^4.17.1",
@@ -20,6 +21,7 @@
     "mongodb": "^3.3.5",
     "mongoose": "^5.7.8",
     "nodemailer": "^6.4.2",
-    "nodemon": "^1.19.4"
+    "nodemon": "^1.19.4",
+    "redis": "^2.8.0"
   }
 }
