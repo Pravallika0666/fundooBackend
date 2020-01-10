@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const runnerRedis = require('../helper/redisCache')
     
 exports.generateToken = (payload) => {
     {
@@ -26,12 +27,40 @@ exports.verify = (request, res, next) => {
 
 exports.userVerify = (request, res, next) => {
     console.log("verifies request");
-    var token = request.headers.token;
-    jwt.verify(token, process.env.KEY, (err, result) => {
-        if (err) res.status(422).send({ message: "token is incorrect" });
-        else {
-            request.decoded = result;
-            next();
-        }
-    })
+
+    runnerRedis.getRedis((err, data) => {
+
+        console.log("Token in verify--",data);
+        
+
+        let newData = data.substring(1, data.length - 1);
+        console.log("Token in login redis cache-->",newData);
+        
+        
+        jwt.verify(newData, process.env.KEY, (err, result) => {
+            if (err) res.status(422).send({ message: "token is incorrect" });
+            else {
+                request.decoded = result;
+                console.log("reqqqqq",result)
+                next();
+            }
+        })
+    });
 }
+
+
+
+
+
+
+// exports.userVerify = (request, res, next) => {
+//     console.log("verifies request");
+//     var token = request.headers.token;
+//     jwt.verify(token, process.env.KEY, (err, result) => {
+//         if (err) res.status(422).send({ message: "token is incorrect" });
+//         else {
+//             request.decoded = result;
+//             next();
+//         }
+//     })
+// }
