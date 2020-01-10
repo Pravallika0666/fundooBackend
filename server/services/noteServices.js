@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const noteModel = require('../model/noteModel')
-const rediscache=require('../helper/redisCache')
+const redisCache = require('../helper/redisCache')
 /**********************************************************
  *  @desc Gets the input from front end pass to model
  *  @param request request contains all the requested data
@@ -21,6 +21,7 @@ exports.addNote = (request) => {
                 } else {
                     reject(err);
                 }
+                redisCache.deleteRedisNote(request.decoded.payload.id)
             })
         })
     } catch (e) {
@@ -36,6 +37,11 @@ exports.addNote = (request) => {
 exports.getAllnote = (request) => {
     try {
         return new Promise((resolve, reject) => {
+            redisCache.getRedisNote(request.decoded.payload.id, (err, data) => {
+                if (data)
+                    resolve(data),
+                        console.log("Data in cache");
+                else {
                     noteModel.notes.find({ _userId: request.decoded.payload.id, isDeleted: false, isArchive: false }, (err, result) => {
                         if (err) {
                             reject(err)
@@ -44,10 +50,10 @@ exports.getAllnote = (request) => {
                                 resolve(result)
                                 console.log("resullt-->", result);
                                 let valueCache = {};
-                                valueCache.id = req.decoded.payload.id;
+                                valueCache.id = request.decoded.payload.id;
                                 valueCache.result = result;
                                 //this called to set Notes in cache.
-                                cacheNote.setRedisNote(valueCache, (err, data) => {
+                                redisCache.setRedisNote(valueCache, (err, data) => {
                                     if (data) {
                                         console.log("seted to cache");
                                     } else {
@@ -60,7 +66,10 @@ exports.getAllnote = (request) => {
                             }
                         }
                     })
+                }
+
             })
+        })
     } catch (e) {
         console.log(e);
     }

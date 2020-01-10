@@ -18,6 +18,10 @@ const fundoo = new Schema({
         type: String,
         required: true
     },
+    isDeleted: {
+        type: String,
+        required: true
+    }
 },
     {
         timestamps: true
