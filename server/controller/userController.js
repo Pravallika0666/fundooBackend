@@ -2,6 +2,7 @@ const Services = require('../services/userServices')
 const tokenGenerate = require('../middlewares/token')
 const nodeMail = require('../middlewares/sendMailer')
 require('dotenv').config()
+const rediscache = require('../helper/redisCache')
 /**********************************************************
  *  @desc Gets the input from front end pass to model
  *  @param request request contains all the requested data
@@ -75,13 +76,22 @@ exports.login = (request, res) => {
                     "id": data._id
                 })
                 console.log("NEW TOKEN", newToken);
-
+                
                 let value = newToken.token;
+                console.log("VALU  IN LOGIN",value);
+                
                 data1.push(newToken);
                 data1.push(data)
                 console.log("Generated token with paste login data--->", data1);
                 response.data = data1
                 res.status(200).send(response);
+                rediscache.setRedis(value, (err, data) => {
+                    if (data) {
+                        console.log("RedisCache connection set")
+                    } else {
+                        console.log("Error in settting");
+                    }
+                })
             }
         })
     }
