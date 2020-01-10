@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const noteModel = require('../model/noteModel')
+const rediscache=require('../helper/redisCache')
 /**********************************************************
  *  @desc Gets the input from front end pass to model
  *  @param request request contains all the requested data
