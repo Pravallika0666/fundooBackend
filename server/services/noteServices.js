@@ -11,17 +11,20 @@ exports.addNote = (request) => {
     try {
         return new Promise((resolve, reject) => {
             let noteDetails = new noteModel.notes({
-                "_userId": request.decoded.payload.id,
+                "userId": request.decoded.payload.id,
                 "title": request.body.title,
                 "description": request.body.description
             })
             noteDetails.save((err, data) => {
-                if (data) {
-                    resolve(data);
-                } else {
+                if (err) {
                     reject(err);
+                } else {
+                    resolve(data);
+                    redisCache.deleteRedisNote(request.decoded.payload.id, (err, data) => {
+                        if (err) console.log('err in deleting cache');
+                        else console.log('deleted the cached notes', data);
+                    })
                 }
-                redisCache.deleteRedisNote(request.decoded.payload.id)
             })
         })
     } catch (e) {
@@ -37,43 +40,37 @@ exports.addNote = (request) => {
 exports.getAllnote = (request) => {
     try {
         return new Promise((resolve, reject) => {
+            //checking for data in cache
             redisCache.getRedisNote(request.decoded.payload.id, (err, data) => {
                 if (data)
-                    resolve(data),
-                        console.log("Data in cache");
+                    resolve(data), console.log('data found in cache');
                 else {
-                    noteModel.notes.find({ _userId: request.decoded.payload.id, isDeleted: false, isArchive: false }, (err, result) => {
-                        if (err) {
-                            reject(err)
+                    // if cached data not found, check in database
+                    console.log('data not found in cache-->moving to database', request.decoded.payload.id);
+
+                    noteModel.notes.find({ userId: request.decoded.payload.id, isDeleted: false }, (err, data) => {
+                        if (data) {
+                            resolve(data)
+                            //take the data from database and add the same to the cache
+                            let cacheNotes = {}
+                            cacheNotes.id = request.decoded.payload.id;
+                            cacheNotes.notes = data
+                            redisCache.setRedisNote(cacheNotes, (err, data) => {
+                                if (data) console.log('cached the notes', data);
+                                else console.log("error in caching notes", err);
+                            })
                         } else {
-                            if (!result.length == 0) {  //this condition to check whether get note is empty or not
-                                resolve(result)
-                                console.log("resullt-->", result);
-                                let valueCache = {};
-                                valueCache.id = request.decoded.payload.id;
-                                valueCache.result = result;
-                                //this called to set Notes in cache.
-                                redisCache.setRedisNote(valueCache, (err, data) => {
-                                    if (data) {
-                                        console.log("seted to cache");
-                                    } else {
-                                        console.log("not set in cache");
-                                    }
-                                })
-                            } else {
-                                console.log("NO Notes");
-                                reject("No Notes")
-                            }
+                            reject(err)
                         }
                     })
                 }
-
             })
         })
     } catch (e) {
         console.log(e);
     }
 }
+
 /**********************************************************
  *  @desc Gets the input from front end pass to model
  *  @param request request contains all the requested data
@@ -83,7 +80,7 @@ exports.getAllnote = (request) => {
 exports.deleteNote = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.findByIdAndUpdate({ _id: request.body.userId }, { isDeleted: true }, (err, result) => {
+            noteModel.notes.findByIdAndUpdate({ _id: request.decoded.payload.id }, { isDeleted: true }, (err, result) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -106,7 +103,7 @@ exports.deleteNote = (request) => {
 exports.updateNote = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.findByIdAndUpdate({ _id: req.body._id }, { title: req.body.title, description: req.body.description }, (err, data) => {
+            noteModel.notes.findByIdAndUpdate({ _id: request.body._id }, { title: request.body.title, description: request.body.description }, (err, data) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -128,7 +125,7 @@ exports.updateNote = (request) => {
 exports.getDeleteNote = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.find({ _userId: request.decoded.payload.id, isDeleted: true, isArchive: false }, (err, result) => {
+            noteModel.notes.find({ userId: request.decoded.payload.id, isDeleted: true, isArchived: false }, (err, result) => {
                 if (err) {
                     reject(err)
                 } else {
