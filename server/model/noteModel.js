@@ -5,7 +5,7 @@ mongoose.set('useFindAndModify', false);
 var Schema = mongoose.Schema
 const fundoo = new Schema({
     /** creating schema for registration */
-    _userId: {
+    userId: {
         type: Schema.Types.ObjectId,
         ref: "users",
         required: true
@@ -20,7 +20,11 @@ const fundoo = new Schema({
     },
     isDeleted: {
         type: String,
-        required: true
+        default:false
+    },
+    isArchived:{
+        type:String,
+        default:false
     }
 },
     {
