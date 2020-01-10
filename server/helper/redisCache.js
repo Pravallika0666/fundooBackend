@@ -25,31 +25,32 @@ exports.setRedis = (value, callback) => {
 }
 
 //exports get redis
-exports.getRedis=(callback)=>{
+exports.getRedis = (callback) => {
     //get is used to get the value of key
-    client.get(process.env.key,(err,data)=>{
-        if(data){
-            callback(null,data)
-        }else{
+    client.get(process.env.key, (err, data) => {
+        if (data) {
+            callback(null, data)
+        } else {
             callback(err)
         }
     })
 }
 
 //exports delete redis
-exports.deleteRedis=()=>{
+exports.deleteRedis = () => {
     //del is used to remove the specified key
-        client.del(process.env.key,(err,data)=>{
-            if(data){
-                console.log("delete data",data) 
-            }else{
-                console.log('no data')
-            }
-        })
-  
+    client.del(process.env.key, (err, data) => {
+        if (data) {
+            console.log("delete data", data)
+        } else {
+            console.log('no data')
+        }
+    })
+
 }
 
 //set redis note is used to set the note 
+//exports set redis note to the cache
 exports.setRedisNote = (valueCache, callback) => {
     client.set(process.env.key + valueCache.id, JSON.stringify(valueCache.result), (err, result) => {
         if (result) {
@@ -64,4 +65,16 @@ exports.setRedisNote = (valueCache, callback) => {
     })
 }
 
-
+//get redis note is used to get the note 
+//exports get redis note is used to get the data from the cache
+exports.getRedisNote = (id, callback) => {
+    client.get(process.env.key + valueCache.id, JSON.stringify(id.result), (err, result) => {
+        if (result) {
+            callback(null, result)
+            console.log("Gets the data", result)
+        } else {
+            callback(err)
+            console.log("error");
+        }
+    })
+}
