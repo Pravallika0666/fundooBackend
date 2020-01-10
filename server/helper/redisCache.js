@@ -7,6 +7,8 @@ client.on('connect', function () {
 client.on('error', (err) => {
     console.log('Error' + err)
 })
+
+//set get and del redis are used to verify token
 //exports set redis 
 exports.setRedis = (value, callback) => {
     //set is used to hold the string value
@@ -21,6 +23,7 @@ exports.setRedis = (value, callback) => {
         }
     })
 }
+
 //exports get redis
 exports.getRedis=(callback)=>{
     //get is used to get the value of key
@@ -32,6 +35,7 @@ exports.getRedis=(callback)=>{
         }
     })
 }
+
 //exports delete redis
 exports.deleteRedis=()=>{
     //del is used to remove the specified key
@@ -44,3 +48,20 @@ exports.deleteRedis=()=>{
         })
   
 }
+
+//set redis note is used to set the note 
+exports.setRedisNote = (valueCache, callback) => {
+    client.set(process.env.key + valueCache.id, JSON.stringify(valueCache.result), (err, result) => {
+        if (result) {
+            callback(null, result);
+            console.log("Token is set", result);
+
+        } else {
+            callback(err);
+            console.log("error");
+
+        }
+    })
+}
+
+
