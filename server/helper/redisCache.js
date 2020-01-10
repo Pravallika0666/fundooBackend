@@ -7,18 +7,37 @@ client.on('connect', function () {
 client.on('error', (err) => {
     console.log('Error' + err)
 })
+//add cache
+exports.addRedisCache = (data, callback) => {
+    client.set(process.env.CACHEKEY, JSON.stringify(data), (err, data) => {
+        if (err) {
+            callback(err)
+        } else {
+            callback(null, data)
+        }
+    })
+}
+//get redis cache
+exports.getRedisCache = (callback) => {
+    client.get(process.env.CACHEKEY, (err, data) => {
+        if (data) {
+            let data1 = JSON.parse(data)
+            callback(null, data1)
+        } else {
+            callback(err)
+        }
+    })
+}
 //set redis note is used to set the note 
 //exports set redis note to the cache
-exports.setRedisNote = (valueCache, callback) => {
-    client.set(process.env.KEY + valueCache.id, JSON.stringify(valueCache.result), (err, result) => {
-        if (result) {
-            callback(null, result);
-            console.log("Token is set", result);
-
-        } else {
+exports.setRedisNote = (data, callback) => {
+    client.set(process.env.CACHEKEY + data.id, JSON.stringify(data.result), (err, data) => {
+        if (err) {
             callback(err);
             console.log("error");
 
+        } else {
+            callback(null, data);
         }
     })
 }
@@ -26,13 +45,14 @@ exports.setRedisNote = (valueCache, callback) => {
 //get redis note is used to get the data from the cache 
 //exports get redis note 
 exports.getRedisNote = (id, callback) => {
-    client.get(process.env.KEY + id, (err, result) => {
-        if (result) {
-            callback(null, result)
-            console.log("Gets the data", result)
+    client.get(process.env.CACHEKEY + id, (err, data) => {
+        if (data) {
+            let data1 = JSON.parse(data)
+            callback(null, data1)
+            console.log('cached data')
         } else {
             callback(err)
-            console.log("error");
+            console.log("error")
         }
     })
 }
@@ -40,10 +60,10 @@ exports.getRedisNote = (id, callback) => {
 //delete redis note is used to delete the note
 //exports delete
 exports.deleteRedisNote = (id, callback) => {
-    client.del(process.env.KEY + id, (err, result) => {
-        if (result) {
-            callback(null, result)
-            console.log("delete the note from the cache", result)
+    client.del(process.env.CACHEKEY + id, (err, data) => {
+        if (data) {
+            callback(data)
+            console.log("data",data)
         } else {
             callback(err)
             console.log("error")
