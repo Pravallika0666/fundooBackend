@@ -86,6 +86,8 @@ exports.deleteNote = (request) => {
                 } else {
                     resolve(result)
                 }
+                cacheNotes.deleteRedisNote(request.decoded.payload.id)
+                console.log("Data delete from redies cache to update the archive");
             })
         })
     }
@@ -107,7 +109,7 @@ exports.updateNote = (request) => {
                 if (err) {
                     reject(err)
                 } else {
-                    resolve(result)
+                    resolve(data)
                 }
             })
         })
