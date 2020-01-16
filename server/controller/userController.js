@@ -76,10 +76,10 @@ exports.login = (request, res) => {
                     "id": data._id
                 })
                 console.log("NEW TOKEN", newToken);
-                
+
                 let value = newToken.token;
-                console.log("VALU  IN LOGIN",value);
-                
+                console.log("VALU  IN LOGIN", value);
+
                 data1.push(newToken);
                 data1.push(data)
                 console.log("Generated token with paste login data--->", data1);
@@ -156,7 +156,7 @@ exports.resetpassword = (request, res) => {
         request.checkBody('confirmpassword', 'confirmpassword is invalid').notEmpty().len(7, 13);
         var error = request.validationErrors()
         if (request.body.password != request.body.confirmpassword)
-        var error = "confirmpassword is incorrect";
+            var error = "confirmpassword is incorrect";
         var response = {};
         if (error) {
             response.error = error;
@@ -171,6 +171,37 @@ exports.resetpassword = (request, res) => {
                 }
             })
         }
+    } catch (e) {
+        console.log(e)
+    }
+}
+/**********************************************************
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//Uploading an image
+exports.imageUpload = (request, res) => {
+    try {
+        console.log('reqqqqqq', request.file);
+
+        const imageURL = request.file.location
+        var response = {}
+        Services.imageUpload(request, imageURL, (err, data) => {
+            if (err) {
+                response.failure = false
+                response.err = err
+                res.status(404).send(response)
+            }
+            else {
+                response.success = true
+                response.imageURL=imageURL
+                response.data = data
+                res.status(200).send(response)
+            }
+        })
+
     } catch (e) {
         console.log(e)
     }
