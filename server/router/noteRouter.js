@@ -9,4 +9,6 @@ router.put('/deleteNote',noteVerify.userVerify,noteController.deleteNote)
 router.put('/updateNote',noteVerify.userVerify,noteController.updateNote)
 router.get('/getDeleteNote',noteVerify.userVerify,noteController.getDeleteNote)
 
+router.post('/addCollaborator',noteVerify.userVerify,noteController.addCollaborator)
+
 module.exports=router;
