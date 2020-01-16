@@ -151,7 +151,7 @@ exports.getDeleteNote = (request) => {
  * @param callback sends the data back or err
  * @return responses with a http response
 ***********************************************************/
-//exports add collaborator
+//exports add collaborator 
 exports.addCollaborator = (request) => {
     try {
         return new Promise((resolve, reject) => {
