@@ -6,7 +6,7 @@ const multerS3 = require('multer-s3');
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 const Bucket = process.env.BUCKET_NAME;
-console.log('bucketttt',Bucket);
+
 
 AWS.config.update({
     
