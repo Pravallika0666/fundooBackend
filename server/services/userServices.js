@@ -97,3 +97,29 @@ exports.resetpassword = (request, callback) => {
     })
 
 }
+/**********************************************************
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+ **********************************************************/
+//exports image upload 
+exports.imageUpload = (request,imageURL, callback) => {
+    model.users.findOne({
+        "_id": request.decoded.payload.id
+    }, (err, data) => {
+        if (err) {
+            callback(err)
+        }
+        else {
+            model.users.updateOne({ "_id": request.decoded.payload.id }, { "imageURL": imageURL }, (err, data1) => {
+                if (err) {
+                    callback(err);
+                } else {
+                    console.log("data1", data1);
+                    callback(null, data1)
+                }
+            })
+        }
+    })
+}
