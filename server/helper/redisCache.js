@@ -8,15 +8,11 @@ client.on('error', (err) => {
     console.log('Error' + err)
 })
 
-/**
- * Below three function used to store the token to verify
- **/
+//functions to store the token to verify using redis cache
 
-exports.setRedis = (val, callback) => {
-    console.log("Vlaue------>",val);
-    
-
-    client.set(process.env.key, JSON.stringify(val), (err, result) => {
+exports.setRedis = (value, callback) => {
+    console.log("Value------>",value);
+    client.set(process.env.key, JSON.stringify(value), (err, result) => {
         if (result) {
             console.log("token set in cache", result);
             callback(null, result);
@@ -51,28 +47,6 @@ delRedis = () => {
     })
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-//add cache
-exports.addRedisCache = (data, callback) => {
-    client.set(process.env.CACHEKEY, JSON.stringify(data), (err, data) => {
-        if (err) {
-            callback(err)
-        } else {
-            callback(null, data)
-        }
-    })
-}
 //get redis cache
 exports.getRedisCache = (callback) => {
     client.get(process.env.CACHEKEY, (err, data) => {
