@@ -17,6 +17,9 @@ const usersData = new Schema({
    password:{
        type:String,
        required:true 
+   },
+   imageURl:{
+       type:String
    }
 }, {
     //returns specific event created at and modified at
