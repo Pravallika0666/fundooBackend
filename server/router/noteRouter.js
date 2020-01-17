@@ -12,4 +12,6 @@ router.get('/getDeleteNote',noteVerify.userVerify,noteController.getDeleteNote)
 router.post('/addCollaborator',noteVerify.userVerify,noteController.addCollaborator)
 router.get('/getCollaborator',noteVerify.userVerify,noteController.getCollaborator)
 
+router.put('/archive',noteVerify.userVerify,noteController.archive)
+
 module.exports=router;
