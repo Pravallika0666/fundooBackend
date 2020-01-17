@@ -17,9 +17,6 @@ AWS.config.update({
 const s3 = new AWS.S3();
 
 const fileFilter = (request, file, cb) => {
-  //  console.log("requestQ in multer--",request);
-  
-
   if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
       cb(null, true);
   } else {
