@@ -102,21 +102,21 @@ exports.deleteNote = (request, res) => {
  * @return responses with a http response
 ***********************************************************/
 //exports update note
-exports.updateNote=(request,res)=>{
-    try{
-        let response={}
+exports.updateNote = (request, res) => {
+    try {
+        let response = {}
         noteServices.updateNote(request)
-        .then((data)=>{
-            response.success=true;
-            response.data=data
-            res.status(200).send(response)
-        })
-        .catch((err)=>{
-            response.success=false;
-            response.err=err
-            res.status(404).send(response)
-        })
-    }catch(e){
+            .then((data) => {
+                response.success = true;
+                response.data = data
+                res.status(200).send(response)
+            })
+            .catch((err) => {
+                response.success = false;
+                response.err = err
+                res.status(404).send(response)
+            })
+    } catch (e) {
         console.log(e)
     }
 }
@@ -127,21 +127,21 @@ exports.updateNote=(request,res)=>{
  * @return responses with a http response
 ***********************************************************/
 //exports get delete note
-exports.getDeleteNote=(request,res)=>{
-    try{
-        let response={}
+exports.getDeleteNote = (request, res) => {
+    try {
+        let response = {}
         noteServices.getDeleteNote(request)
-        .then((data)=>{
-            response.success=true
-            response.data=data
-            res.status(200).send(response)
-        })
-        .catch((err)=>{
-            response.success=false;
-            response.err=err
-            res.status(400).send(response)
-        })
-    }catch(e){
+            .then((data) => {
+                response.success = true
+                response.data = data
+                res.status(200).send(response)
+            })
+            .catch((err) => {
+                response.success = false;
+                response.err = err
+                res.status(400).send(response)
+            })
+    } catch (e) {
         console.log(e)
     }
 }
@@ -152,21 +152,21 @@ exports.getDeleteNote=(request,res)=>{
  * @return responses with a http response
 ***********************************************************/
 //exports add collaborator
-exports.addCollaborator=(request,res)=>{
-    try{
-        let response={}
+exports.addCollaborator = (request, res) => {
+    try {
+        let response = {}
         noteServices.addCollaborator(request)
-        .then((data)=>{
-            response.success=true
-            response.data=data
-            res.status(200).send(response)
-        })
-        .catch((err)=>{
-            response.success=false
-            response.err=err
-            res.status(400).send(response)
-        })
-    }catch(e){
+            .then((data) => {
+                response.success = true
+                response.data = data
+                res.status(200).send(response)
+            })
+            .catch((err) => {
+                response.success = false
+                response.err = err
+                res.status(400).send(response)
+            })
+    } catch (e) {
         console.log(e)
     }
 }
@@ -177,22 +177,22 @@ exports.addCollaborator=(request,res)=>{
  * @return responses with a http response
 ***********************************************************/
 //exports get collaborator
-exports.getCollaborator=(request)=>{
-    try{
-        request.checkBody('noteId','noteid is invalid').notEmpty() 
-        let response={}
+exports.getCollaborator = (request) => {
+    try {
+        request.checkBody('noteId', 'noteid is invalid').notEmpty()
+        let response = {}
         noteServices.getCollaborator(request)
-        .then((data)=>{
-            response.success=true
-            response.data=data
-            res.status(200).send(response)
-        })
-        .catch((err)=>{
-            response.success=false
-            response.err=err
-            res.status(400).send(response)
-        })
-    }catch(e){
+            .then((data) => {
+                response.success = true
+                response.data = data
+                res.status(200).send(response)
+            })
+            .catch((err) => {
+                response.success = false
+                response.err = err
+                res.status(400).send(response)
+            })
+    } catch (e) {
         console.log(e)
     }
 }
@@ -203,21 +203,21 @@ exports.getCollaborator=(request)=>{
  * @return responses with a http response
 ***********************************************************/
 //exports archive 
-exports.archive=(request,res)=>{
-    try{
-        let response={}
+exports.archive = (request, res) => {
+    try {
+        let response = {}
         noteServices.archive(request)
-        .then((data)=>{
-            response.success=true
-            response.data=data
-            res.status(200).send(response)
-        })
-        .catch((err)=>{
-            response.success=false
-            response.err=err
-            res.status(400).send(response)
-        })
-    }catch(e){
+            .then((data) => {
+                response.success = true
+                response.data = data
+                res.status(200).send(response)
+            })
+            .catch((err) => {
+                response.success = false
+                response.err = err
+                res.status(400).send(response)
+            })
+    } catch (e) {
         console.log(e)
     }
 }
@@ -228,21 +228,21 @@ exports.archive=(request,res)=>{
  * @return responses with a http response
 ***********************************************************/
 //exports unarchive
-exports.unarchive=(request,res)=>{
-    try{
-        let response={}
+exports.unarchive = (request, res) => {
+    try {
+        let response = {}
         noteServices.unarchive(request)
-        .then((data)=>{
-            response.success=true
-            response.data=data
-            res.status(200).send(response)
-        })
-        .catch((err)=>{
-            response.success=false
-            response.err=err
-            res.status(400).send(response)
-        })
-    }catch(e){
+            .then((data) => {
+                response.success = true
+                response.data = data
+                res.status(200).send(response)
+            })
+            .catch((err) => {
+                response.success = false
+                response.err = err
+                res.status(400).send(response)
+            })
+    } catch (e) {
         console.log(e)
     }
 }
@@ -253,21 +253,21 @@ exports.unarchive=(request,res)=>{
  * @return responses with a http response
 ***********************************************************/
 //exports get archive note
-exports.getArchiveNote=(request,res)=>{
-    try{
-        let response={}
+exports.getArchiveNote = (request, res) => {
+    try {
+        let response = {}
         noteServices.getArchiveNote(request)
-        .then((data)=>{
-            response.success=true
-            response.data=data
-            res.status(200).send(response)
-        })
-        .catch((err)=>{
-            response.success=false
-            response.err=err
-            res.status(400).send(response)
-        })
-    }catch(e){
+            .then((data) => {
+                response.success = true
+                response.data = data
+                res.status(200).send(response)
+            })
+            .catch((err) => {
+                response.success = false
+                response.err = err
+                res.status(400).send(response)
+            })
+    } catch (e) {
         console.log(e)
     }
 }
@@ -278,21 +278,47 @@ exports.getArchiveNote=(request,res)=>{
  * @return responses with a http response
 ***********************************************************/
 //exports remainder
-exports.addReminder=(request,res)=>{
-    try{
-        let response={}
+exports.addReminder = (request, res) => {
+    try {
+        let response = {}
         noteServices.addReminder(request)
-        .then((data)=>{
-            response.success=true
-            response.data=data
-            res.status(200).send(response)
-        })
-        .catch((err)=>{
-            response.success=false
-            response.err=err
-            res.status(400).send(response)
-        })
-    }catch(e){
+            .then((data) => {
+                response.success = true
+                response.data = data
+                res.status(200).send(response)
+            })
+            .catch((err) => {
+                response.success = false
+                response.err = err
+                res.status(400).send(response)
+            })
+    } catch (e) {
+        console.log(e)
+    }
+}
+/**********************************************************
+ *  @desc Gets the input from front end pass to model
+ *  @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports delete reminder
+exports.deleteReminder = (request, res) => {
+    try {
+        let response = {}
+        noteServices.deleteReminder(request)
+            .then((data) => {
+                response.success = true
+                response.data = data
+                res.status(200).send(response)
+            })
+            .catch((err) => {
+                response.success = false
+                response.err = err
+                res.status(400).send(response)
+            })
+
+    } catch (e) {
         console.log(e)
     }
 }
