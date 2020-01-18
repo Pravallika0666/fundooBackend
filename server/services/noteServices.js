@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const noteModel = require('../model/noteModel')
-const Model=require('../model/collaboratorModel')
+const Model = require('../model/collaboratorModel')
 const redisCache = require('../helper/redisCache')
 /**********************************************************
  *  @desc Gets the input from front end pass to model
@@ -179,10 +179,10 @@ exports.addCollaborator = (request) => {
 exports.getCollaborator = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.find({ _id: request.decoded.payload.noteId, isDeleted:true, isArchived:true },(err,result)=>{
-                if(err){
+            noteModel.notes.find({ _id: request.decoded.payload.noteId, isDeleted: true, isArchived: true }, (err, result) => {
+                if (err) {
                     reject(err)
-                }else{
+                } else {
                     resolve(result)
                 }
             })
@@ -198,21 +198,45 @@ exports.getCollaborator = (request) => {
  * @return responses with a http response
 ***********************************************************/
 //exports archive
-exports.archive=(request)=>{
-    try{
-        return new Promise((resolve,reject)=>{
-            Model.collModel.find({ _id:request.decoded.payload.noteId, isArchived:false},(err,result)=>{
-                if(err){
+exports.archive = (request) => {
+    try {
+        return new Promise((resolve, reject) => {
+            Model.collModel.find({ _id: request.decoded.payload.noteId, isArchived: true }, (err, result) => {
+                if (err) {
                     reject(err)
                 }
-                else{
+                else {
                     resolve(result)
                 }
             })
             redisCache.deleteRedisNote(request.decoded.payload.noteId)
-                console.log("Data delete from redies cache to update the archive");
+            console.log("Data delete from redies cache to update the archive");
         })
-    }catch(e){
+    } catch (e) {
+        console.log(e)
+    }
+}
+/**********************************************************
+ *  @desc Gets the input from front end pass to model
+ *  @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports unarchive
+exports.unarchive = (request) => {
+    try {
+        return new Promise((resolve, reject) => {
+            Model.collModel({ _id: request.decoded.payload.noteId, isArchived: false },(err,result)=>{
+                if(err){
+                    reject(err)
+                }else{
+                    resolve(result)
+                }
+            })
+            redisCache.deleteRedisNote(request.decoded.payload.id)
+            console.log("Data retrieved from redis cache and unarchieved")
+        })
+    } catch (e) {
         console.log(e)
     }
 }
