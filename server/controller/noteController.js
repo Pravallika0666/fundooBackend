@@ -246,3 +246,29 @@ exports.unarchive=(request,res)=>{
         console.log(e)
     }
 }
+/**********************************************************
+ *  @desc Gets the input from front end pass to model
+ *  @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports get archive note
+exports.getArchiveNote=(request,res)=>{
+    try{
+        let response={}
+        noteServices.getArchiveNote(request)
+        .then((data)=>{
+            response.success=true
+            response.data=data
+            res.status(200).send(response)
+        })
+        .catch((err)=>{
+            response.success=false
+            response.err=err
+            res.status(400).send(response)
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
