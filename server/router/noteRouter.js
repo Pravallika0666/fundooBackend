@@ -13,5 +13,6 @@ router.post('/addCollaborator',noteVerify.userVerify,noteController.addCollabora
 router.get('/getCollaborator',noteVerify.userVerify,noteController.getCollaborator)
 
 router.put('/archive',noteVerify.userVerify,noteController.archive)
+router.put('/unarchive',noteVerify.userVerify,noteController.unarchive)
 
 module.exports=router;
