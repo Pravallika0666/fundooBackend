@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const noteModel = require('../model/noteModel')
-const Model = require('../model/collaboratorModel')
 const redisCache = require('../helper/redisCache')
 /**********************************************************
  *  @desc Gets the input from front end pass to model
@@ -255,14 +254,37 @@ exports.getArchiveNote = (request) => {
                     reject(err)
                 }
                 else {
-                    if (!result.length == 0) {  //this condition to check whether get note is empty or not
+                    if (!result.length == 0) {
                         resolve(result)
                         console.log("resullt-->", result);
-    
+
                     } else {
                         console.log("NO Notes");
                         reject("No Notes")
                     }
+                }
+            })
+        })
+    } catch (e) {
+        console.log(e)
+    }
+}
+/**********************************************************
+ *  @desc Gets the input from front end pass to model
+ *  @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports remainder
+exports.addReminder = (request) => {
+    try {
+        return new Promise((resolve, reject) => {
+            noteModel.notes.findByIdAndUpdate({ _userId: request.decoded.payload.id, isArchived: true }, (err, result) => {
+                if(err){
+                    reject(err)
+                }
+                else{
+                resolve(result)
                 }
             })
         })
