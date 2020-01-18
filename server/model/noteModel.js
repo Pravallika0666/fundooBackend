@@ -25,6 +25,9 @@ const fundoo = new Schema({
     isArchived:{
         type:String,
         default:false
+    },
+    Reminder:{
+        type:String,
     }
 },
     {
