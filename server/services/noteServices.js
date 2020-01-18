@@ -201,7 +201,7 @@ exports.getCollaborator = (request) => {
 exports.archive = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            Model.collModel.find({ _id: request.decoded.payload.noteId, isArchived: true }, (err, result) => {
+            noteModel.notes.findByIdAndUpdate({ _id: request.decoded.payload.noteId, isArchived: true }, (err, result) => {
                 if (err) {
                     reject(err)
                 }
@@ -226,10 +226,10 @@ exports.archive = (request) => {
 exports.unarchive = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            Model.collModel({ _id: request.decoded.payload.noteId, isArchived: false },(err,result)=>{
-                if(err){
+            noteModel.notes.findByIdAndUpdate({ _id: request.decoded.payload.noteId, isArchived: false }, (err, result) => {
+                if (err) {
                     reject(err)
-                }else{
+                } else {
                     resolve(result)
                 }
             })
@@ -247,20 +247,26 @@ exports.unarchive = (request) => {
  * @return responses with a http response
 ***********************************************************/
 //exports get archive note
-exports.getArchiveNote=(request)=>{
-    try{
-        return new Promise((resolve,reject)=>{
-            Model.collModel({noteId:request.decoded.payload.id},(err,result)=>{
-                if(err){
+exports.getArchiveNote = (request) => {
+    try {
+        return new Promise((resolve, reject) => {
+            noteModel.notes.find({ _userId: request.decoded.payload.id, isArchived: true, isDeleted: false }, (err, result) => {
+                if (err) {
                     reject(err)
                 }
-                else{
-                    resolve(result)
+                else {
+                    if (!result.length == 0) {  //this condition to check whether get note is empty or not
+                        resolve(result)
+                        console.log("resullt-->", result);
+    
+                    } else {
+                        console.log("NO Notes");
+                        reject("No Notes")
+                    }
                 }
             })
-            redisCache.getRedisNote(request.decoded.payload.id)
-        })     
-    }catch(e){
+        })
+    } catch (e) {
         console.log(e)
     }
 }
