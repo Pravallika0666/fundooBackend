@@ -249,7 +249,7 @@ exports.unarchive = (request) => {
 exports.getArchiveNote = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.find({ _userId: request.decoded.payload.id, isArchived: true, isDeleted: false }, (err, result) => {
+            noteModel.notes.find({ userId: request.decoded.payload.id, isArchived: true, isDeleted: false }, (err, result) => {
                 if (err) {
                     reject(err)
                 }
@@ -279,16 +279,42 @@ exports.getArchiveNote = (request) => {
 exports.addReminder = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.findByIdAndUpdate({ _userId: request.decoded.payload.id, isArchived: true }, (err, result) => {
-                if(err){
+            noteModel.notes.findOneAndUpdate({ userId: request.decoded.payload.id }, { Reminder: request.body.Reminder }, (err, result) => {
+                if (err) {
                     reject(err)
                 }
-                else{
-                resolve(result)
+                else {
+                    let response = {}
+                    response.resolve = result;
+                    response.email = request.decoded.payload.email
+                    resolve(response)
                 }
             })
         })
     } catch (e) {
         console.log(e)
+    }
+}
+/**********************************************************
+ *  @desc Gets the input from front end pass to model
+ *  @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports delete reminder
+exports.deleteReminder = (request) => {
+    try {
+        return new Promise((resolve, reject) => {
+            noteModel.notes.findOne({ id: request.decoded.payload.id }, (err, result) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(result)
+                }
+            })
+        })
+    } catch (e) {
+        console.log(e);
+
     }
 }
