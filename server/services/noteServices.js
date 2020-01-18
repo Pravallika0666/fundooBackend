@@ -240,3 +240,27 @@ exports.unarchive = (request) => {
         console.log(e)
     }
 }
+/**********************************************************
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports get archive note
+exports.getArchiveNote=(request)=>{
+    try{
+        return new Promise((resolve,reject)=>{
+            Model.collModel({noteId:request.decoded.payload.id},(err,result)=>{
+                if(err){
+                    reject(err)
+                }
+                else{
+                    resolve(result)
+                }
+            })
+            redisCache.getRedisNote(request.decoded.payload.id)
+        })     
+    }catch(e){
+        console.log(e)
+    }
+}
