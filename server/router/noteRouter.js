@@ -15,6 +15,7 @@ router.get('/getCollaborator',noteVerify.userVerify,noteController.getCollaborat
 router.put('/archive',noteVerify.userVerify,noteController.archive)
 router.put('/unarchive',noteVerify.userVerify,noteController.unarchive)
 router.get('/getArchiveNote',noteVerify.userVerify,noteController.getArchiveNote)
-router.put('/addReminder',noteVerify.userVerify,noteController.addReminder)
+router.post('/addReminder',noteVerify.userVerify,noteController.addReminder)
+router.put('/deleteReminder',noteVerify.userVerify,noteController.deleteReminder)
 
 module.exports=router;
