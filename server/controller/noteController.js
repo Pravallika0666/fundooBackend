@@ -1,4 +1,4 @@
-const noteServices = require('../services/noteServices')
+const Services = require('../services/noteServices')
 
 /**********************************************************
  *  @desc Gets the input from front end pass to model
@@ -17,7 +17,7 @@ exports.addNote = (request, res) => {
         res.status(422).send(response)
     }
     else {
-        noteServices.addNote(request)
+        Services.addNote(request)
             .then((data) => {
                 console.log("In controller");
                 response.success = true;
@@ -44,7 +44,7 @@ exports.addNote = (request, res) => {
 exports.getAllnote = (request, res) => {
     try {
         let response = {}
-        noteServices.getAllnote(request)
+        Services.getAllnote(request)
             .then((data) => {
                 response.success = true;
                 response.data = data
@@ -78,7 +78,7 @@ exports.deleteNote = (request, res) => {
             response.success = false;
             res.status(422).send(response)
         } else {
-            noteServices.deleteNote(request)
+            Services.deleteNote(request)
                 .then((data) => {
                     response.success = true
                     response.data = data
@@ -105,7 +105,7 @@ exports.deleteNote = (request, res) => {
 exports.updateNote = (request, res) => {
     try {
         let response = {}
-        noteServices.updateNote(request)
+        Services.updateNote(request)
             .then((data) => {
                 response.success = true;
                 response.data = data
@@ -130,7 +130,7 @@ exports.updateNote = (request, res) => {
 exports.getDeleteNote = (request, res) => {
     try {
         let response = {}
-        noteServices.getDeleteNote(request)
+        Services.getDeleteNote(request)
             .then((data) => {
                 response.success = true
                 response.data = data
@@ -155,7 +155,7 @@ exports.getDeleteNote = (request, res) => {
 exports.addCollaborator = (request, res) => {
     try {
         let response = {}
-        noteServices.addCollaborator(request)
+        Services.addCollaborator(request)
             .then((data) => {
                 response.success = true
                 response.data = data
@@ -181,7 +181,7 @@ exports.getCollaborator = (request) => {
     try {
         request.checkBody('noteId', 'noteid is invalid').notEmpty()
         let response = {}
-        noteServices.getCollaborator(request)
+        Services.getCollaborator(request)
             .then((data) => {
                 response.success = true
                 response.data = data
@@ -206,33 +206,10 @@ exports.getCollaborator = (request) => {
 exports.archive = (request, res) => {
     try {
         let response = {}
-        noteServices.archive(request)
+        Services.archive(request)
             .then((data) => {
-                response.success = true
-                response.data = data
-                res.status(200).send(response)
-            })
-            .catch((err) => {
-                response.success = false
-                response.err = err
-                res.status(400).send(response)
-            })
-    } catch (e) {
-        console.log(e)
-    }
-}
-/**********************************************************
- *  @desc Gets the input from front end pass to model
- *  @param request request contains all the requested data
- * @param callback sends the data back or err
- * @return responses with a http response
-***********************************************************/
-//exports unarchive
-exports.unarchive = (request, res) => {
-    try {
-        let response = {}
-        noteServices.unarchive(request)
-            .then((data) => {
+                console.log("dataa",data);
+                
                 response.success = true
                 response.data = data
                 res.status(200).send(response)
@@ -256,7 +233,7 @@ exports.unarchive = (request, res) => {
 exports.getArchiveNote = (request, res) => {
     try {
         let response = {}
-        noteServices.getArchiveNote(request)
+        Services.getArchiveNote(request)
             .then((data) => {
                 response.success = true
                 response.data = data
@@ -281,7 +258,7 @@ exports.getArchiveNote = (request, res) => {
 exports.addReminder = (request, res) => {
     try {
         let response = {}
-        noteServices.addReminder(request)
+        Services.addReminder(request)
             .then((data) => {
                 response.success = true
                 response.data = data
@@ -306,7 +283,7 @@ exports.addReminder = (request, res) => {
 exports.deleteReminder = (request, res) => {
     try {
         let response = {}
-        noteServices.deleteReminder(request)
+        Services.deleteReminder(request)
             .then((data) => {
                 response.success = true
                 response.data = data
@@ -320,5 +297,31 @@ exports.deleteReminder = (request, res) => {
 
     } catch (e) {
         console.log(e)
+    }
+}
+/**********************************************************
+ *  @desc Gets the input from front end pass to model
+ *  @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports create label
+exports.labelCreate=(request,res)=>{
+    try{
+        request.checkBody('labelName','noteName is invalid').notEmpty()
+        let response={}
+        Services.labelCreate(request)
+        .then((data)=>{
+            response.success=true
+            response.data=data
+            res.status(200).send(response)
+        })
+        .catch((err)=>{
+            response.success=false
+            response.err=err
+            res.status(400).send(response)
+        })
+    }catch(err){
+        console.log(err)
     }
 }
