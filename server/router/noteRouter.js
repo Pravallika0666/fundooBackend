@@ -13,9 +13,11 @@ router.post('/addCollaborator',noteVerify.userVerify,noteController.addCollabora
 router.get('/getCollaborator',noteVerify.userVerify,noteController.getCollaborator)
 
 router.put('/archive',noteVerify.userVerify,noteController.archive)
-router.put('/unarchive',noteVerify.userVerify,noteController.unarchive)
 router.get('/getArchiveNote',noteVerify.userVerify,noteController.getArchiveNote)
+
 router.post('/addReminder',noteVerify.userVerify,noteController.addReminder)
 router.put('/deleteReminder',noteVerify.userVerify,noteController.deleteReminder)
+
+router.post('/createLabel',noteVerify.userVerify,noteController.labelCreate)
 
 module.exports=router;
