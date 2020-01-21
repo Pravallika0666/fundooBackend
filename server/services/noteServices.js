@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
 const noteModel = require('../model/noteModel')
 const redisCache = require('../helper/redisCache')
+const labelModels = require('../model/labelModel')
 /**********************************************************
  *  @desc Gets the input from front end pass to model
  *  @param request request contains all the requested data
@@ -40,18 +40,16 @@ exports.addNote = (request) => {
 exports.getAllnote = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            //checking for data in cache
             redisCache.getRedisNote(request.decoded.payload.id, (err, data) => {
                 if (data)
                     resolve(data), console.log('data found in cache');
                 else {
-                    // if cached data not found, check in database
+
                     console.log('data not found in cache-->moving to database', request.decoded.payload.id);
 
-                    noteModel.notes.find({ userId: request.decoded.payload.id, isDeleted: false }, (err, data) => {
+                    noteModel.notes.find({ userId: request.decoded.payload.id }, (err, data) => {
                         if (data) {
                             resolve(data)
-                            //take the data from database and add the same to the cache
                             let cacheNotes = {}
                             cacheNotes.id = request.decoded.payload.id;
                             cacheNotes.notes = data
@@ -80,7 +78,7 @@ exports.getAllnote = (request) => {
 exports.deleteNote = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.findByIdAndUpdate({ _id: request.decoded.payload.id }, { isDeleted: true }, (err, result) => {
+            noteModel.notes.findByIdAndUpdate({ _id: request.decoded.payload.id }, (err, result) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -127,7 +125,7 @@ exports.updateNote = (request) => {
 exports.getDeleteNote = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.find({ userId: request.decoded.payload.id, isDeleted: true, isArchived: false }, (err, result) => {
+            noteModel.notes.find({ userId: request.decoded.payload.id }, (err, result) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -155,7 +153,7 @@ exports.getDeleteNote = (request) => {
 exports.addCollaborator = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.find({ userId: request.decoded.payload.id, isDeleted: true, isArchived: false }, (err, result) => {
+            noteModel.notes.find({ userId: request.decoded.payload.id }, (err, result) => {
                 if (err) {
                     reject(err)
                 }
@@ -178,7 +176,7 @@ exports.addCollaborator = (request) => {
 exports.getCollaborator = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.find({ _id: request.decoded.payload.noteId, isDeleted: true, isArchived: true }, (err, result) => {
+            noteModel.notes.find({ _id: request.decoded.payload.noteId }, (err, result) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -200,7 +198,7 @@ exports.getCollaborator = (request) => {
 exports.archive = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.findByIdAndUpdate({ _id: request.decoded.payload.noteId, isArchived: true }, (err, result) => {
+            noteModel.notes.findByIdAndUpdate({ _id: request.body.noteId }, { $set: { isArchived: request.body.isArchived } }, (err, result) => {
                 if (err) {
                     reject(err)
                 }
@@ -208,32 +206,8 @@ exports.archive = (request) => {
                     resolve(result)
                 }
             })
-            redisCache.deleteRedisNote(request.decoded.payload.noteId)
-            console.log("Data delete from redies cache to update the archive");
-        })
-    } catch (e) {
-        console.log(e)
-    }
-}
-/**********************************************************
- *  @desc Gets the input from front end pass to model
- *  @param request request contains all the requested data
- * @param callback sends the data back or err
- * @return responses with a http response
-***********************************************************/
-//exports unarchive
-exports.unarchive = (request) => {
-    try {
-        return new Promise((resolve, reject) => {
-            noteModel.notes.findByIdAndUpdate({ _id: request.decoded.payload.noteId, isArchived: false }, (err, result) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    resolve(result)
-                }
-            })
             redisCache.deleteRedisNote(request.decoded.payload.id)
-            console.log("Data retrieved from redis cache and unarchieved")
+            console.log("Data delete from redies cache to update the archive");
         })
     } catch (e) {
         console.log(e)
@@ -249,7 +223,7 @@ exports.unarchive = (request) => {
 exports.getArchiveNote = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.find({ userId: request.decoded.payload.id, isArchived: true, isDeleted: false }, (err, result) => {
+            noteModel.notes.find({ userId: request.decoded.payload.id }, (err, result) => {
                 if (err) {
                     reject(err)
                 }
@@ -259,7 +233,7 @@ exports.getArchiveNote = (request) => {
                         console.log("resullt-->", result);
 
                     } else {
-                        console.log("NO Notes");
+                        console.log("No Notes");
                         reject("No Notes")
                     }
                 }
@@ -279,13 +253,14 @@ exports.getArchiveNote = (request) => {
 exports.addReminder = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.findOneAndUpdate({ userId: request.decoded.payload.id }, { Reminder: request.body.Reminder }, (err, result) => {
+            noteModel.notes.findOneAndUpdate({ userId: request.decoded.payload.id }, { $set: { Reminder: request.body.Reminder } }, (err, result) => {
                 if (err) {
                     reject(err)
                 }
                 else {
                     let response = {}
                     response.resolve = result;
+                    console.log("resullt-->", result);
                     response.email = request.decoded.payload.email
                     resolve(response)
                 }
@@ -296,8 +271,8 @@ exports.addReminder = (request) => {
     }
 }
 /**********************************************************
- *  @desc Gets the input from front end pass to model
- *  @param request request contains all the requested data
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
  * @param callback sends the data back or err
  * @return responses with a http response
 ***********************************************************/
@@ -305,7 +280,7 @@ exports.addReminder = (request) => {
 exports.deleteReminder = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.findOne({ id: request.decoded.payload.id }, (err, result) => {
+            noteModel.notes.findOne({ _id: request.body.noteId }, { $unset: { Reminder: request.body.Reminder } }, (err, result) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -316,5 +291,25 @@ exports.deleteReminder = (request) => {
     } catch (e) {
         console.log(e);
 
+    }
+}
+/**********************************************************
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports create label
+exports.labelCreate = (request) => {
+    try {
+        return new Promise((resolve, reject) => {
+            let labelDetails = new labelModels.label({
+                "nameLabel": request.body.nameLabel,
+                "userId": request.decoded.payload.id
+            })
+
+        })
+    } catch (e) {
+        console.log(e)
     }
 }
