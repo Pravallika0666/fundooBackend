@@ -1,61 +1,70 @@
 const noteModel = require('../model/noteModel')
 const redisCache = require('../helper/redisCache')
 const labelModels = require('../model/labelModel')
+const collaboratorModel = require('../model/collaboratorModel')
+const elasticSearch = require('../helper/elasticSearch')
 /**********************************************************
- *  @desc Gets the input from front end pass to model
- *  @param request request contains all the requested data
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
  * @param callback sends the data back or err
  * @return responses with a http response
 ***********************************************************/
-exports.addNote = (request) => {
+//exports add a note
+exports.addNote = async (request) => {
     try {
-        return new Promise((resolve, reject) => {
-            let noteDetails = new noteModel.notes({
+        return new Promise(await ((resolve, reject) => {
+            //note details
+            let note = new noteModel.notes({
                 "userId": request.decoded.payload.id,
                 "title": request.body.title,
                 "description": request.body.description
             })
-            noteDetails.save((err, data) => {
+            note.save((err, data) => {
                 if (err) {
                     reject(err);
                 } else {
                     resolve(data);
+                    //deleting notes from rediscache
                     redisCache.deleteRedisNote(request.decoded.payload.id, (err, data) => {
-                        if (err) console.log('err in deleting cache');
-                        else console.log('deleted the cached notes', data);
+                        if (err) console.log('error while deleting from redis cache');
+                        else console.log('Successfully deleted the notes', data);
                     })
                 }
             })
-        })
+        }))
     } catch (e) {
         console.log(e)
     }
 }
 /**********************************************************
- *  @desc Gets the input from front end pass to model
- *  @param request request contains all the requested data
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
  * @param callback sends the data back or err
  * @return responses with a http response
 ***********************************************************/
+//Gets all notes
 exports.getAllnote = (request) => {
     try {
         return new Promise((resolve, reject) => {
+            //get the notes from the redis cache
             redisCache.getRedisNote(request.decoded.payload.id, (err, data) => {
-                if (data)
-                    resolve(data), console.log('data found in cache');
+                if (data) {
+                    resolve(data), console.log('Data in cache');
+                    elasticSearch.document(data)
+                }
                 else {
-
-                    console.log('data not found in cache-->moving to database', request.decoded.payload.id);
-
+                    //finds the notes by using user id of each user
                     noteModel.notes.find({ userId: request.decoded.payload.id }, (err, data) => {
                         if (data) {
                             resolve(data)
-                            let cacheNotes = {}
-                            cacheNotes.id = request.decoded.payload.id;
-                            cacheNotes.notes = data
-                            redisCache.setRedisNote(cacheNotes, (err, data) => {
-                                if (data) console.log('cached the notes', data);
-                                else console.log("error in caching notes", err);
+                            let cache = {}
+                            cache.id = request.decoded.payload.id;
+                            cache.notes = data
+                            redisCache.setRedisNote(cache, (err, data) => {
+                                if (data) console.log('Notes in cache', data),
+                                    //Adding a elastic search document
+                                    elasticSearch.document(data)
+                                else console.log("Error in cache", err);
                             })
                         } else {
                             reject(err)
@@ -70,22 +79,25 @@ exports.getAllnote = (request) => {
 }
 
 /**********************************************************
- *  @desc Gets the input from front end pass to model
- *  @param request request contains all the requested data
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
  * @param callback sends the data back or err
  * @return responses with a http response
 ***********************************************************/
-exports.deleteNote = (request) => {
+//To delete the notes
+exports.isTrash = (request) => {
     try {
         return new Promise((resolve, reject) => {
+            //find the note by id and delete and update it
             noteModel.notes.findByIdAndUpdate({ _id: request.decoded.payload.id }, (err, result) => {
                 if (err) {
                     reject(err)
                 } else {
                     resolve(result)
                 }
+                //delete the notes from redis cache
                 redisCache.deleteRedisNote(request.decoded.payload.id)
-                console.log("Data delete from redies cache to update the archive");
+                console.log("Delete the notes redis cache and update the trash");
             })
         })
     }
@@ -94,35 +106,13 @@ exports.deleteNote = (request) => {
     }
 }
 /**********************************************************
- *  @desc Gets the input from front end pass to model
- *  @param request request contains all the requested data
- * @param callback sends the data back or err
- * @return responses with a http response
-***********************************************************/
-//exports update note
-exports.updateNote = (request) => {
-    try {
-        return new Promise((resolve, reject) => {
-            noteModel.notes.findByIdAndUpdate({ _id: request.body._id }, { title: request.body.title, description: request.body.description }, (err, data) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    resolve(data)
-                }
-            })
-        })
-    } catch (e) {
-        console.log(e)
-    }
-}
-/**********************************************************
- *  @desc Gets the input from front end pass to model
- *  @param request request contains all the requested data
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
  * @param callback sends the data back or err
  * @return responses with a http response
 ***********************************************************/
 //exports get delete note
-exports.getDeleteNote = (request) => {
+exports.unTrash = (request) => {
     try {
         return new Promise((resolve, reject) => {
             noteModel.notes.find({ userId: request.decoded.payload.id }, (err, result) => {
@@ -144,21 +134,21 @@ exports.getDeleteNote = (request) => {
     }
 }
 /**********************************************************
- *  @desc Gets the input from front end pass to model
- *  @param request request contains all the requested data
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
  * @param callback sends the data back or err
  * @return responses with a http response
 ***********************************************************/
-//exports add collaborator 
-exports.addCollaborator = (request) => {
+//exports update note
+exports.updateNote = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.find({ userId: request.decoded.payload.id }, (err, result) => {
+            //find by id and update the note
+            noteModel.notes.findByIdAndUpdate({ _id: request.body.id }, { title: request.body.title, description: request.body.description }, (err, data) => {
                 if (err) {
                     reject(err)
-                }
-                else {
-                    resolve(result)
+                } else {
+                    resolve(data)
                 }
             })
         })
@@ -166,28 +156,7 @@ exports.addCollaborator = (request) => {
         console.log(e)
     }
 }
-/**********************************************************
- *  @desc Gets the input from front end pass to model
- *  @param request request contains all the requested data
- * @param callback sends the data back or err
- * @return responses with a http response
-***********************************************************/
-//exports get collaborator
-exports.getCollaborator = (request) => {
-    try {
-        return new Promise((resolve, reject) => {
-            noteModel.notes.find({ _id: request.decoded.payload.noteId }, (err, result) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    resolve(result)
-                }
-            })
-        })
-    } catch (err) {
-        console.log(err)
-    }
-}
+
 /**********************************************************
  * @desc Gets the input from front end pass to model
  * @param request request contains all the requested data
@@ -198,6 +167,7 @@ exports.getCollaborator = (request) => {
 exports.archive = (request) => {
     try {
         return new Promise((resolve, reject) => {
+            //set the notes to the archive
             noteModel.notes.findByIdAndUpdate({ _id: request.body.noteId }, { $set: { isArchived: request.body.isArchived } }, (err, result) => {
                 if (err) {
                     reject(err)
@@ -207,7 +177,30 @@ exports.archive = (request) => {
                 }
             })
             redisCache.deleteRedisNote(request.decoded.payload.id)
-            console.log("Data delete from redies cache to update the archive");
+            console.log("Delete the data from redis cache and update archive");
+        })
+    } catch (e) {
+        console.log(e)
+    }
+}
+/**********************************************************
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports unarchive
+exports.unarchive = (request) => {
+    try {
+        return new Promise((resolve, reject) => {
+            //unarchive notes from the archive
+            noteModel.notes.find({ _id: request.decoded.payload.noteId }, { $unset: { isArchived: request.body.isArchived } }, (err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(data)
+                }
+            })
         })
     } catch (e) {
         console.log(e)
@@ -220,9 +213,10 @@ exports.archive = (request) => {
  * @return responses with a http response
 ***********************************************************/
 //exports get archive note
-exports.getArchiveNote = (request) => {
+exports.getArchiveNote = async (request) => {
     try {
-        return new Promise((resolve, reject) => {
+        return new Promise(await ((resolve, reject) => {
+            //get archive notes by userId
             noteModel.notes.find({ userId: request.decoded.payload.id }, (err, result) => {
                 if (err) {
                     reject(err)
@@ -238,14 +232,14 @@ exports.getArchiveNote = (request) => {
                     }
                 }
             })
-        })
+        }))
     } catch (e) {
         console.log(e)
     }
 }
 /**********************************************************
- *  @desc Gets the input from front end pass to model
- *  @param request request contains all the requested data
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
  * @param callback sends the data back or err
  * @return responses with a http response
 ***********************************************************/
@@ -307,9 +301,193 @@ exports.labelCreate = (request) => {
                 "nameLabel": request.body.nameLabel,
                 "userId": request.decoded.payload.id
             })
-
+            labelDetails.save((err, data) => {
+                if (err) {
+                    reject(err)
+                }
+                else {
+                    resolve(data)
+                }
+            })
         })
     } catch (e) {
         console.log(e)
+    }
+}
+/**********************************************************
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports get labels
+exports.getLabels = async (request) => {
+    try {
+        return new Promise(await ((resolve, reject) => {
+            labelModels.label.find({ userId: request.decoded.payload.id }, (err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    if (!data.length == 0) {
+                        resolve(data)
+                        console.log("resullt-->", data);
+
+                    } else {
+                        console.log("Notesssss");
+                        reject("Nooo notes available")
+                    }
+                }
+            })
+        }))
+    } catch (e) {
+        console.log(e)
+    }
+}
+/**********************************************************
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports update label
+exports.updateLabels = (request) => {
+    try {
+        return new Promise((resolve, reject) => {
+            labelModels.label.updateOne({ _id: request.body._id }, { nameLabel: request.body.nameLabel }, (err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(data)
+                }
+            })
+        })
+    } catch (e) {
+        console.log(e)
+    }
+}
+/**********************************************************
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports delete label
+exports.deleteLabels = (request) => {
+    try {
+        return new Promise((resolve, reject) => {
+            labelModels.label.deleteMany({ _id: request.body.labelId }, (err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(data)
+                }
+            })
+        })
+    } catch (e) {
+        console.log(e)
+    }
+}
+/**********************************************************
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports add collaborator
+exports.addCollaborator = (request) => {
+    try {
+        return new Promise((resolve, reject) => {
+            if (request.decoded.payload.id != request.body.collaboratorEmail) {
+                collaboratorModel.collaborator.findOne({ noteId: request.body.noteId }, (err, data) => {
+                    // console.log("rrrrrr", request.body);
+                    if (err || data == null) {
+                        let newcollaborator = new collaboratorModel.collaborator({
+                            "userId": request.decoded.payload.id,
+                            "noteId": request.body.noteId,
+                            "collaboratorEmail": request.body.collaboratorEmail
+                        })
+                        newcollaborator.save((err, data) => {
+                            console.log("dataa1", data);
+                            if (err) {
+                                reject(err)
+                            } else {
+                                resolve(data)
+                            }
+                        })
+                    } else {
+                        console.log("Add on array");
+                        if (data.collaboratorEmail.includes(request.body.collaboratorEmail)) {
+                            console.log("data", data)
+                            reject('Existing collaborator! Already exists');
+                        } else {
+                            collaboratorModel.collaborator.findOneAndUpdate({
+                                "noteId": request.body.noteId
+                            },
+                                {
+                                    $push: {
+                                        "collaboratorEmail": request.body.collaboratorEmail
+                                    }
+                                }, (err, data) => {
+                                    console.log("collaborator email", request.body.collaboratorEmail);
+
+                                    if (err) {
+                                        reject(err)
+                                    } else {
+                                        resolve(data)
+                                    }
+                                })
+                        }
+                    }
+                })
+            }
+        })
+    } catch (e) {
+        console.log(e)
+    }
+}
+/**********************************************************
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports delete collaborator
+exports.deleteCollaborator = (request) => {
+    try {
+        return new Promise((resolve, reject) => {
+            collaboratorModel.collaborator.deleteMany({ _id: request.decoded.payload.id }, (err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(data)
+                }
+            })
+        })
+    } catch (e) {
+        console.log(e)
+    }
+}
+/**********************************************************
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports get collaborator
+exports.getCollaborator = (request) => {
+    try {
+        return new Promise((resolve, reject) => {
+            collaboratorModel.collaborator.find({ noteId: request.body.noteId }, (err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(data)
+                    console.log("data", data)
+                }
+            })
+        })
+    } catch (e) {
+        console.log(e);
+
     }
 }

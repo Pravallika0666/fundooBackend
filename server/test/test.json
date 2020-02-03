@@ -1,5 +1,5 @@
 {
-    "registration": {
+    "register": {
         "firstName": "pravallika",
         "lastName": "sk",
         "email": "skpravallikachowdary2@gmail.com",
@@ -16,5 +16,9 @@
     "resetPassword": {
         "password": "123456789",
         "confirmPassword": "123456789"
+    },
+    "addNote": {
+        "title": "fundoo",
+        "description": "notes"
     }
 }

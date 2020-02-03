@@ -4,7 +4,6 @@ mongoose.set('useFindAndModify', false);
 /*creating a schema of database*/
 var Schema = mongoose.Schema
 const fundoo = new Schema({
-    /** creating schema for registration */
     userId: {
         type: Schema.Types.ObjectId,
         ref: "users",
@@ -27,7 +26,7 @@ const fundoo = new Schema({
         default:false
     },
     Reminder:{
-        type:String,
+        type:String
     }
 },
     {
