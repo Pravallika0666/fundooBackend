@@ -85,7 +85,7 @@ exports.login = (request, res) => {
                 console.log("Generated token with paste login data--->", data1);
                 response.data = data1
                 res.status(200).send(response);
-                rediscache.setRedis(value, (err, data) => {
+                rediscache.setRedisCache(value, (err, data) => {
                     if (data) {
                         console.log("RedisCache connection set")
                     } else {
@@ -196,7 +196,7 @@ exports.imageUpload = (request, res) => {
             }
             else {
                 response.success = true
-                response.imageURL=imageURL
+                response.imageURL = imageURL
                 response.data = data
                 res.status(200).send(response)
             }
