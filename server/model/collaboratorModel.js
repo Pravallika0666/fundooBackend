@@ -1,27 +1,27 @@
-const mongoose = require("mongoose")
+//collaborator model
+const mongoose = require('mongoose')
 mongoose.set('useFindAndModify', false)
 
-//creating schema for the collaborator
 var Schema = mongoose.Schema
-const collModel = new Schema({
+const collaboratorModel = new Schema({
     userId: {
-        type: Schema.Types.ObjectId,
-        ref: "users",
-        required: true
+        type: String,
+        required: true,
+        ref: "users"
     },
     noteId: {
-        type: Schema.Types.ObjectId,
-        ref: "notes",
-        required: true
+        type: String,
+        required: true,
+        ref: "notes"
     },
-    collaboratorEmail: {
+    "collaboratorEmail": [{
         type: String,
         required: true
-    }
+    }]
+
 },
     {
         timestamps: true
-    }
-)
+    })
 
-exports.collaborator = mongoose.model("user", collModel)
+exports.collaborator = mongoose.model("collaboratorsModel", collaboratorModel)
