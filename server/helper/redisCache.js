@@ -84,14 +84,12 @@ exports.getRedisNote = (id, callback) => {
 //exports delete
 exports.deleteRedisNote = (id) => {
     client.del(process.env.CACHEKEY + id, (err, data) => {
-        // console.log("pppppppppp", data);
         if (err) {
-
             console.log("error", err)
         } else {
             let data1 = JSON.parse(data)
             console.log("dataaaa", data1);
-            console.log('cached data')
+            console.log('data is cached')
         }
     })
 }

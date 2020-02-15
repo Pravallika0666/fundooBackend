@@ -18,15 +18,23 @@ const fundoo = new Schema({
         required: true
     },
     isDeleted: {
+        type: Boolean,
+        default: false
+    },
+    isArchived: {
+        type: Boolean,
+        default: false
+    },
+    Reminder: {
+        type: String
+    },
+    isPinned: {
+        type: Boolean,
+        default: false
+    },
+    color: {
         type: String,
-        default:false
-    },
-    isArchived:{
-        type:String,
-        default:false
-    },
-    Reminder:{
-        type:String
+        default: "#FFFFFF"
     }
 },
     {

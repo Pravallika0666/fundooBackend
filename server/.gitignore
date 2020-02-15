@@ -1,4 +1,7 @@
-node_modules
-.env
+/node_modules
+/.env
 package-lock.json
-configuration
+.scannerwork
+.vscode/
+docker-compose.yml/
+sonar-project.properties/

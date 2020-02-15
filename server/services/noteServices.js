@@ -19,6 +19,7 @@ exports.addNote = async (request) => {
                 "title": request.body.title,
                 "description": request.body.description
             })
+
             note.save((err, data) => {
                 if (err) {
                     reject(err);
@@ -89,11 +90,15 @@ exports.isTrash = (request) => {
     try {
         return new Promise((resolve, reject) => {
             //find the note by id and delete and update it
-            noteModel.notes.findByIdAndUpdate({ _id: request.decoded.payload.id }, (err, result) => {
+            console.log("uefgesfhielw", request.body);
+
+            noteModel.notes.findByIdAndUpdate({ _id: request.body.noteId }, { $set: { isDeleted: request.body.isDeleted } }, (err, result) => {
                 if (err) {
                     reject(err)
                 } else {
                     resolve(result)
+                    console.log("resulttttt", result);
+
                 }
                 //delete the notes from redis cache
                 redisCache.deleteRedisNote(request.decoded.payload.id)
@@ -144,7 +149,7 @@ exports.updateNote = (request) => {
     try {
         return new Promise((resolve, reject) => {
             //find by id and update the note
-            noteModel.notes.findByIdAndUpdate({ _id: request.body.id }, { title: request.body.title, description: request.body.description }, (err, data) => {
+            noteModel.notes.findByIdAndUpdate({ _id: request.body.noteId }, { $set: { title: request.body.title, description: request.body.description } }, (err, data) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -395,7 +400,7 @@ exports.deleteLabels = (request) => {
 ***********************************************************/
 //exports add collaborator
 exports.addCollaborator = (request) => {
-    try {
+    try { 
         return new Promise((resolve, reject) => {
             if (request.decoded.payload.id != request.body.collaboratorEmail) {
                 collaboratorModel.collaborator.findOne({ noteId: request.body.noteId }, (err, data) => {
@@ -483,6 +488,30 @@ exports.getCollaborator = (request) => {
                 } else {
                     resolve(data)
                     console.log("data", data)
+                }
+            })
+        })
+    } catch (e) {
+        console.log(e);
+
+    }
+}
+/**********************************************************
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+exports.color = (request) => {
+    try {
+        console.log("requestcolor",request.body)
+        return new Promise((resolve, reject) => {
+            noteModel.notes.findOneAndUpdate({ _id: request.body.noteId }, { $set: { color: request.body.color } }, (err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    console.log("dataaaaaaaa",data);
+                    resolve(data)
                 }
             })
         })

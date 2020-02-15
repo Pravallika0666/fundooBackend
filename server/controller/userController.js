@@ -185,7 +185,7 @@ exports.resetpassword = (request, res) => {
 exports.imageUpload = (request, res) => {
     try {
         console.log('reqqqqqq', request.file);
-
+        console.log('reqqqqqq', request.file.location);
         const imageURL = request.file.location
         var response = {}
         Services.imageUpload(request, imageURL, (err, data) => {
@@ -197,7 +197,8 @@ exports.imageUpload = (request, res) => {
             else {
                 response.success = true
                 response.imageURL = imageURL
-                response.data = data
+                response.data = imageURL
+                console.log("imagesREsponse",data);
                 res.status(200).send(response)
             }
         })

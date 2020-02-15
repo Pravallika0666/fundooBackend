@@ -17,6 +17,8 @@ AWS.config.update({
 const s3 = new AWS.S3();
 //fileFilter is used to control which files are to be accepted
 const fileFilter = (request, file, cb) => {
+  console.log("filesssss",file);
+  
   //mimetype of the file
   if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
       cb(null, true);

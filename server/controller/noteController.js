@@ -19,6 +19,7 @@ exports.addNote = (request, res) => {
         res.status(422).send(response)
     }
     else {
+        console.log("requestNotesssssss", request.body)
         Services.addNote(request)
             .then((data) => {
                 console.log("In controller");
@@ -31,7 +32,6 @@ exports.addNote = (request, res) => {
                 response.success = false;
                 response.err = err
                 res.status(404).send(response)
-
             })
     }
 }
@@ -72,7 +72,7 @@ exports.getAllnote = (request, res) => {
 //exports delete note
 exports.isTrash = (request, res) => {
     try {
-        request.checkBody('userId', 'userid is invalid').notEmpty()
+        request.checkBody('noteId', 'noteId is invalid').notEmpty()
         var error = request.validationErrors()
         var response = {}
         if (error) {
@@ -82,11 +82,12 @@ exports.isTrash = (request, res) => {
         } else {
             Services.isTrash(request)
                 .then((data) => {
+                    console.log("dtaaaaaaa", data);
                     response.success = true
                     response.data = data
                     res.status(200).send(response)
                 })
-                .catch((e) => {
+                .catch((err) => {
                     response.success = false;
                     response.err = err
                     res.status(404).send(response)
@@ -132,6 +133,8 @@ exports.unTrash = (request, res) => {
 exports.updateNote = (request, res) => {
     try {
         let response = {}
+        console.log("requestttt", request.body);
+
         Services.updateNote(request)
             .then((data) => {
                 response.success = true;
@@ -180,20 +183,20 @@ exports.archive = (request, res) => {
  * @return responses with a http response
 ***********************************************************/
 //exports unarchive
-exports.unarchive=(request,res)=>{
-    try{
-        let response={}
-        Services.unarchive=(request)
-        .then((data)=>{
-            response.success=true
-            response.data=data
-            res.status(200).send(response)
-        }).catch((err)=>{
-            response.success=false
-            response.err=err
-            res.status(400).send(response)
-        })
-    }catch(e){
+exports.unarchive = (request, res) => {
+    try {
+        let response = {}
+        Services.unarchive = (request)
+            .then((data) => {
+                response.success = true
+                response.data = data
+                res.status(200).send(response)
+            }).catch((err) => {
+                response.success = false
+                response.err = err
+                res.status(400).send(response)
+            })
+    } catch (e) {
         console.log(e)
     }
 }
@@ -457,5 +460,40 @@ exports.getCollaborator = (request, res) => {
             })
     } catch (e) {
         console.log(e)
+    }
+}
+/**********************************************************
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+exports.color = (request, res) => {
+    try {
+        // request.checkBody('noteId', 'noteId is invalid').notEmpty()
+        // request.checkBody('color', 'color is invalid').notEmpty()
+        let error = request.validationErrors()
+        let response = {}
+        if (error) {
+            response.error = error
+            response.success = false
+            res.status(422).send(response)
+        } else {
+            console.log("colorrequest", request.body);
+            Services.color(request)
+                .then((data) => {
+                    response.success = true
+                    response.data = data
+                    res.status(200).send(response)
+                })
+                .catch((err) => {
+                    response.success = false
+                    response.err = err
+                    res.status(400).send(response)
+                })
+        }
+    } catch (e) {
+        console.log(e);
+
     }
 }

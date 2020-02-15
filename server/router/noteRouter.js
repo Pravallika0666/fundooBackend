@@ -12,7 +12,7 @@ router.get('/getAllnote', noteVerify.userVerify, noteController.getAllnote)
 router.put('/updateNote', noteVerify.userVerify, noteController.updateNote)
 
 router.put('/archive', noteVerify.userVerify, noteController.archive)
-router.get('/unarchive', noteVerify.userVerify, noteController.unarchive)
+router.put('/unarchive', noteVerify.userVerify, noteController.unarchive)
 router.get('/getArchiveNote', noteVerify.userVerify, noteController.getArchiveNote)
 router.put('/isTrash', noteVerify.userVerify, noteController.isTrash)
 router.get('/unTrash', noteVerify.userVerify, noteController.unTrash)
@@ -36,6 +36,10 @@ router.get('/getCollaborator', noteVerify.userVerify, noteController.getCollabor
 /*route to create my index of elastic search*/
 router.post('/createmyIndex', noteVerify.userVerify, elasticSearchController.createmyIndex)
 /*route to search of elastic search*/
-router.post('/search',noteVerify.userVerify,elasticSearchController.search)
+router.post('/search', noteVerify.userVerify, elasticSearchController.search)
+
+router.put('/color', noteVerify.userVerify, noteController.color)
+
+
 
 module.exports = router;

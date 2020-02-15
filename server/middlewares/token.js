@@ -4,7 +4,7 @@ const Redis = require('../helper/redisCache')
 exports.generateToken = (payload) => {
     {
         console.log('payload->',payload)
-        const token = jwt.sign({ payload }, process.env.KEY, { expiresIn: '1h' }) // expires in 1 hour
+        const token = jwt.sign({ payload }, process.env.KEY, { expiresIn: '24h' }) // expires in 1 hour
         const obj = {
             success: true,
             message: 'Token Generated Successfully!!',
