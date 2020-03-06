@@ -16,7 +16,8 @@ const collaboratorModel = new Schema({
     },
     "collaboratorEmail": [{
         type: String,
-        required: true
+        required: true,
+        ref:'users'
     }]
 
 },

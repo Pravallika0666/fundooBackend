@@ -13,12 +13,9 @@ const elasticSearch = require('../helper/elasticSearch')
 exports.addNote = async (request) => {
     try {
         return new Promise(await ((resolve, reject) => {
-            //note details
-            let note = new noteModel.notes({
-                "userId": request.decoded.payload.id,
-                "title": request.body.title,
-                "description": request.body.description
-            })
+            console.log(request.body, "ssssssssssssssssssssssssssss");
+
+            let note = new noteModel.notes(request.body)
 
             note.save((err, data) => {
                 if (err) {
@@ -188,29 +185,7 @@ exports.archive = (request) => {
         console.log(e)
     }
 }
-/**********************************************************
- * @desc Gets the input from front end pass to model
- * @param request request contains all the requested data
- * @param callback sends the data back or err
- * @return responses with a http response
-***********************************************************/
-//exports unarchive
-exports.unarchive = (request) => {
-    try {
-        return new Promise((resolve, reject) => {
-            //unarchive notes from the archive
-            noteModel.notes.find({ _id: request.decoded.payload.noteId }, { $unset: { isArchived: request.body.isArchived } }, (err, data) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    resolve(data)
-                }
-            })
-        })
-    } catch (e) {
-        console.log(e)
-    }
-}
+
 /**********************************************************
  * @desc Gets the input from front end pass to model
  * @param request request contains all the requested data
@@ -252,7 +227,7 @@ exports.getArchiveNote = async (request) => {
 exports.addReminder = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.findOneAndUpdate({ userId: request.decoded.payload.id }, { $set: { Reminder: request.body.Reminder } }, (err, result) => {
+            noteModel.notes.findOneAndUpdate({ _id: request.body.noteId }, { Reminder: request.body.Reminder }, (err, result) => {
                 if (err) {
                     reject(err)
                 }
@@ -279,7 +254,7 @@ exports.addReminder = (request) => {
 exports.deleteReminder = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            noteModel.notes.findOne({ _id: request.body.noteId }, { $unset: { Reminder: request.body.Reminder } }, (err, result) => {
+            noteModel.notes.updateOne({ _id: request.body.noteId }, { $unset: { Reminder: "" } }, (err, result) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -380,7 +355,10 @@ exports.updateLabels = (request) => {
 exports.deleteLabels = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            labelModels.label.deleteMany({ _id: request.body.labelId }, (err, data) => {
+            labelModels.label.findOneAndDelete({
+                _id: request.body._id,
+                userId: request.decoded.payload.id
+            }, (err, data) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -400,7 +378,7 @@ exports.deleteLabels = (request) => {
 ***********************************************************/
 //exports add collaborator
 exports.addCollaborator = (request) => {
-    try { 
+    try {
         return new Promise((resolve, reject) => {
             if (request.decoded.payload.id != request.body.collaboratorEmail) {
                 collaboratorModel.collaborator.findOne({ noteId: request.body.noteId }, (err, data) => {
@@ -482,7 +460,7 @@ exports.deleteCollaborator = (request) => {
 exports.getCollaborator = (request) => {
     try {
         return new Promise((resolve, reject) => {
-            collaboratorModel.collaborator.find({ noteId: request.body.noteId }, (err, data) => {
+            collaboratorModel.collaborator.find({ _id: request.body.noteId }, (err, data) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -504,13 +482,13 @@ exports.getCollaborator = (request) => {
 ***********************************************************/
 exports.color = (request) => {
     try {
-        console.log("requestcolor",request.body)
+        console.log("requestcolor", request.body)
         return new Promise((resolve, reject) => {
             noteModel.notes.findOneAndUpdate({ _id: request.body.noteId }, { $set: { color: request.body.color } }, (err, data) => {
                 if (err) {
                     reject(err)
                 } else {
-                    console.log("dataaaaaaaa",data);
+                    console.log("dataaaaaaaa", data);
                     resolve(data)
                 }
             })
@@ -519,4 +497,65 @@ exports.color = (request) => {
         console.log(e);
 
     }
+}
+
+
+
+// exports.search = (notes) => {
+//     let getData = {
+//         'userId': notes._id
+//     };
+//     let findData = {
+//         'description': {
+//             $regex: notes.key,
+//             $options: 'i'
+//         }
+//     }
+//     let array = [];
+//     return new Promise((resolve, reject) => {
+//         noteModel.notes.find(notes, (err, data) => {
+//             if (data) {
+//                 data.forEach((element) => {
+//                     if (element.userId === notes.userId) {
+//                         array.push(element);
+//                     }
+//                 })
+//                 let reversedArray = array.reverse();
+//                 resolve(reversedArray);
+//             }
+//             else {
+//                 reject(err)
+//             }
+//         })
+//     })
+// }
+exports.search = (getData) => {
+    return new Promise((resolve, reject) => {
+        noteModel.notes.findOne({
+            $or: [{
+                'title': {
+                    $regex: getData.key,
+                    $options: 'i'
+                }
+            },
+            {
+                'description': {
+                    $regex: getData.key,
+                    $options: 'i'
+                }
+            }
+            ]
+        }, (err, data) => {
+            if (data !== null) {
+                resolve(data)
+                console.log("dataaaaa", data);
+            }
+            else {
+                reject(err)
+            }
+        }).catch((err) => {
+            console.log(err);
+
+        })
+    })
 }

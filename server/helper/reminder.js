@@ -1,5 +1,5 @@
 let schedule = require('node-schedule');
-let sns=require('../AWS')
+let sns = require('../AWS')
 let noteServices = require('../services/noteServices')
 let noteController = require('../controller/noteController')
 
@@ -25,8 +25,8 @@ exports.reminderScheduler = (request) => {
 
       console.log('Time to work');
       const arr = {
-        "title": request.body.title,
-        "description": request.body.description
+        "index": "someIndex",
+        "name": "pravallika"
       }
       sns.notifications(arr, email);
       resolve('Solve')

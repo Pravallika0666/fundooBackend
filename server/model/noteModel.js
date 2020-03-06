@@ -35,7 +35,11 @@ const fundoo = new Schema({
     color: {
         type: String,
         default: "#FFFFFF"
-    }
+    },
+    imageURl: {
+        type: String
+    },
+
 },
     {
         timestamps: true
@@ -43,3 +47,45 @@ const fundoo = new Schema({
 )
 
 exports.notes = mongoose.model("notes", fundoo)
+// var notes=mongoose.model("notes",fundoo)
+// notes.findOne({ "" : { $regex: /notes/ , $options: 'i' } },
+// function (err, note) {
+//        if (err) return handleError(err);
+//        console.log('%s %s is a %s.', note.title.first, note.title.last, title.occupation);
+
+// });
+// var notes=mongoose.model("notes",fundoo)
+// class notes {
+//     find(noteData) {
+//         return new Promise((resolve, reject) => {
+//             notes.find({
+//                 $or: [{
+//                     'title': {
+//                         $regex: noteData.key,
+//                         $options: 'i'
+//                     }
+//                 },
+//                 {
+//                     'description': {
+//                         $regex: noteData.key,
+//                         $options: 'i'
+//                     }
+//                 }
+//                 ]
+//             })
+//                 .then((data) => {
+//                     console.log("dataaaa", data);
+
+//                     if (data !== null) {
+//                         resolve(data)
+//                     } else {
+//                         console.log("error");
+
+//                     }
+//                 })
+//                 .catch((error) => {
+//                     reject(error)
+//                 })
+//         })
+//     }
+// }

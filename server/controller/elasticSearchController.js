@@ -32,7 +32,7 @@ exports.createmyIndex = (request, res) => {
 //exports elastic search 
 exports.search = (request, res) => {
     try {
-        let response={}
+        let response = {}
         elasticClient.search(request, (err, data) => {
             if (err) {
                 response.success = false

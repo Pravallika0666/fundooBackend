@@ -497,3 +497,49 @@ exports.color = (request, res) => {
 
     }
 }
+/**********************************************************
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
+//exports search
+exports.search = (request, res) => {
+    let response = {}
+    try {
+        request.checkBody('key', 'key can not be empty and at least of 1 characters').notEmpty().isLength({
+            min: 1
+        })
+        let error = request.validationErrors()
+        if (error) {
+            response.success = false;
+            response.message = error[0].msg;
+            response.error = error
+            return res.status(500).send(response);
+        } else {
+            let getData = {}
+            getData._id = request.decoded.payload.id
+            getData.key = request.body.key
+            console.log("get data", getData)
+
+            Services.search(getData)
+                .then((data) => {
+                    console.log("daaaaaaaaaaaaaaattttttttttaaaaaaaa", data);
+
+                    response.success = true;
+                    response.data = data;
+                    response.message = "Data found successfully"
+                    return res.status(200).send(response)
+                })
+                .catch((error) => {
+                    response.success = false;
+                    response.message = "Errorrrrsssssssss"
+                    response.err = error;
+                    res.status(400).send(response)
+                })
+        }
+    } catch (err) {
+        console.log(err);
+
+    }
+}

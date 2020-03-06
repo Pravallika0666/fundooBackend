@@ -62,7 +62,6 @@ exports.document = (getNoteDetails) => {
                 "description": ele.description
             }
             array.push(data)
-            // console.log('data', array)
         })
         //bulk is a way of adding multiple documents in elastic search
         elasticCli.bulk({
@@ -86,6 +85,7 @@ exports.document = (getNoteDetails) => {
 //elastic search
 exports.search = (request, callback) => {
     try {
+        let userId = request.decoded.payload._id
         let body = {
             query: {
                 query_string: {
@@ -97,7 +97,7 @@ exports.search = (request, callback) => {
             }
         }
         elasticCli.search({
-            index: request.decoded.payload.id,
+            index: userId,
             body: body,
             type: "getNoteDetails"
         }, (err, data) => {
@@ -105,6 +105,8 @@ exports.search = (request, callback) => {
                 callback(err)
             } else {
                 callback(null, data)
+                console.log("search data",data);
+                
             }
         })
     } catch (e) {

@@ -10,4 +10,5 @@ router.post('/login',userController.login)//router for the login
 router.post('/forgotpassword',userController.forgotpassword)//router for the forgotpassword
 router.post('/resetpassword/:token',token.verify,userController.resetpassword)//router for resetpassword
 router.post('/imageUpload',userToken.userVerify,upload.single('image'),userController.imageUpload)
+router.get('/getUsers',userToken.userVerify,userController.getUsers)
 module.exports=router;

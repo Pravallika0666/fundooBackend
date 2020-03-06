@@ -36,7 +36,7 @@ router.get('/getCollaborator', noteVerify.userVerify, noteController.getCollabor
 /*route to create my index of elastic search*/
 router.post('/createmyIndex', noteVerify.userVerify, elasticSearchController.createmyIndex)
 /*route to search of elastic search*/
-router.post('/search', noteVerify.userVerify, elasticSearchController.search)
+router.post('/search', noteVerify.userVerify, noteController.search)
 
 router.put('/color', noteVerify.userVerify, noteController.color)
 
