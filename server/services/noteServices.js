@@ -529,6 +529,12 @@ exports.color = (request) => {
 //         })
 //     })
 // }
+/**********************************************************
+ * @desc Gets the input from front end pass to model
+ * @param request request contains all the requested data
+ * @param callback sends the data back or err
+ * @return responses with a http response
+***********************************************************/
 exports.search = (getData) => {
     return new Promise((resolve, reject) => {
         noteModel.notes.findOne({
